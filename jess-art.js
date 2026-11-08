@@ -24,6 +24,7 @@ const ART = {
   amphora: `<svg viewBox="0 0 40 60" aria-hidden="true"><path d="M15 3h10v5c0 3 9 6 9 19 0 13-8 22-9 27H15c-1-5-9-14-9-27 0-13 9-16 9-19z" fill="currentColor"/><path d="M15 10c-7 0-9 7-4 11M25 10c7 0 9 7 4 11" stroke="currentColor" stroke-width="2.4" fill="none"/><path d="M8 30h24M9 36h22" stroke="var(--band)" stroke-width="1.6"/><path d="M12 33l3-3 3 3 3-3 3 3 3-3 3 3" stroke="var(--band)" stroke-width="1.2" fill="none"/></svg>`,
   owl: `<svg viewBox="0 0 40 60" aria-hidden="true"><path d="M8 14 L12 4 L17 11 Q20 10 23 11 L28 4 L32 14 Q36 22 34 36 Q32 52 20 56 Q8 52 6 36 Q4 22 8 14Z" fill="currentColor"/><circle cx="14" cy="20" r="6" fill="var(--band)"/><circle cx="26" cy="20" r="6" fill="var(--band)"/><circle cx="14" cy="20" r="2.6" fill="currentColor"/><circle cx="26" cy="20" r="2.6" fill="currentColor"/><path d="M18 26l2 4 2-4z" fill="var(--band)"/><path d="M13 36q3 2 6 0q3 2 6 0M13 42q3 2 6 0q3 2 6 0M15 48q2.5 2 5 0q2.5 2 5 0" stroke="var(--band)" stroke-width="1.3" fill="none"/></svg>`,
   olive: `<svg viewBox="0 0 120 30" aria-hidden="true"><path d="M4 18 Q60 8 116 16" stroke="#6b7a35" stroke-width="2" fill="none"/>${[14,30,46,62,78,94].map((x,i)=>`<ellipse cx="${x}" cy="${i%2?20:9}" rx="8" ry="3" transform="rotate(${i%2?18:-18} ${x} ${i%2?20:9})" fill="#7d8c3f"/>`).join("")}<circle cx="38" cy="22" r="3.2" fill="#2f3a18"/><circle cx="86" cy="8" r="3.2" fill="#2f3a18"/></svg>`,
+  heartFlag: id => `<svg viewBox="0 0 32 30" aria-hidden="true"><defs><clipPath id="hf-${id}"><path d="M16 29C6 21 0 15 0 8.5 0 3.8 3.8 0 8.5 0c3.3 0 6.1 1.8 7.5 4.5C17.4 1.8 20.2 0 23.5 0 28.2 0 32 3.8 32 8.5 32 15 26 21 16 29Z"/></clipPath></defs><g clip-path="url(#hf-${id})"><rect width="32" height="10" fill="#111"/><rect y="10" width="32" height="10" fill="#fff"/><rect y="20" width="32" height="10" fill="#149954"/><path d="M0 0L15 15L0 30z" fill="#e4312b"/></g></svg>`,
   flag: `<svg viewBox="0 0 30 15" aria-hidden="true"><rect width="30" height="5" fill="#111"/><rect y="5" width="30" height="5" fill="#fff"/><rect y="10" width="30" height="5" fill="#149954"/><path d="M0 0L11 7.5L0 15z" fill="#e4312b"/></svg>`
 };
 // Greek key (meander) and tatreez cross-stitch tiles as CSS backgrounds.
@@ -34,8 +35,8 @@ const TATREEZ = (c, c2) => {
 };
 const GREEK_NUM = ["α΄", "β΄", "γ΄", "δ΄", "ε΄", "ϛ΄", "ζ΄"];
 const VOUCHERS = [
-  { id: "d1", kind: "dinner", title: "Dinner out, your pick", body: "Any restaurant you want. Order whatever, don't look at the prices.", fine: "Includes dessert. Non-negotiable." },
-  { id: "s1", kind: "study", title: "Quiet-house study night", body: "Phone on silent, house on lockdown, tea and snacks delivered to your desk on a schedule.", fine: "Interruptions only for refills." },
+  { id: "d1", kind: "dinner", title: "Dinner in, chef's choice", body: "I plan a surprise menu, cook every course and set the table like a restaurant. You just show up hungry.", fine: "Includes dessert. Non-negotiable." },
+  { id: "s1", kind: "study", title: "Quiet-house study night", body: "Phone on silent, house on lockdown, coffee and snacks delivered to your desk on a schedule.", fine: "Interruptions only for refills." },
   { id: "d2", kind: "dinner", title: "Home-cooked, you name it", body: "Pick the dish, I shop, cook, plate it and do every last dish after.", fine: "Kitchen cleanup included." },
   { id: "s2", kind: "study", title: "Flashcard quiz master", body: "I drill you on whatever you're studying for as long as you want, with zero complaining.", fine: "Correct answers earn snacks." },
   { id: "d3", kind: "dinner", title: "Takeout, any spot", body: "Your favourite takeout. I order it, pick it up and set it all out.", fine: "Movie of your choice comes with it." },
