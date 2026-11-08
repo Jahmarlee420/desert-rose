@@ -143,6 +143,28 @@ footer .fdove .wing.far { animation-name: wingbeat-far; animation-delay: -.05s; 
 @keyframes wingbeat-far { 0% { transform: scaleY(1) rotate(-2deg); } 42% { transform: scaleY(-.4) rotate(5deg); } 55% { transform: scaleY(-.44) rotate(5deg); } 100% { transform: scaleY(1) rotate(-2deg); } }
 @keyframes lift { 0%, 100% { transform: translateY(2px); } 45% { transform: translateY(-5px); } }
 /* v4: detailed hydria vases in the top corners with live water */
+/* the Enterprise drifts in from the distance through the open band of sky, then jumps to warp */
+.flyby { position: absolute; left: 0; right: 0; top: 0; height: 150px; overflow: hidden; z-index: 2; pointer-events: none;
+  --w: 110px; --x0: 34vw; --x1: 50vw; --x2: 54vw; --x3: 60vw; }
+.flyby .ship { position: absolute; top: 58px; left: 0; width: var(--w); transform-origin: 0 50%; filter: drop-shadow(0 0 5px rgba(120, 200, 255, .35)); animation: flyby 34s linear 4s infinite both; }
+.flyby .ship svg { display: block; width: 100%; height: auto; }
+.flyby .warp, .flyby .deflector { animation: nacglow 1.8s ease-in-out infinite; }
+@keyframes nacglow { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+@keyframes flyby {
+  0% { transform: translateX(var(--x0)) scale(.18) scaleX(1); opacity: 0; }
+  5% { opacity: .9; }
+  40% { transform: translateX(var(--x1)) scale(.8) scaleX(1); opacity: 1; }
+  46% { transform: translateX(var(--x2)) scale(.85) scaleX(1); opacity: 1; }
+  47.5% { transform: translateX(var(--x3)) scale(.85) scaleX(4); opacity: .9; }
+  49% { transform: translateX(120vw) scale(.85) scaleX(7); opacity: 0; }
+  100% { transform: translateX(120vw) scale(.85) scaleX(1); opacity: 0; }
+}
+@media (max-width: 640px) { .flyby { --w: 64px; --x0: 30vw; --x1: 42vw; --x2: 45vw; --x3: 50vw; } .flyby .ship { top: 64px; } }
+footer .quote { display: flex; gap: 14px; align-items: center; margin: 0 0 10px; max-width: 46ch; }
+footer .quote .delta { width: 34px; flex: none; }
+footer .quote .delta svg { display: block; width: 100%; height: auto; }
+footer .quote blockquote { margin: 0; font-family: var(--display); font-size: 19px; line-height: 1.35; color: #eef3f7; }
+footer .quote figcaption { margin-top: 4px; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); }
 .vases { position: absolute; left: 0; right: 0; top: 0; height: 160px; overflow: hidden; z-index: 3; pointer-events: none; }
 .vase { position: absolute; top: 20px; width: 136px; }
 .vase.l { left: 0; }
@@ -161,6 +183,7 @@ footer .heart svg { width: 100%; height: 100%; display: block; }
 <canvas id="stars"></canvas>
 <div class="meander" id="m1"></div>
 <div class="vases"><div class="vase l"></div><div class="vase r"></div></div>
+<div class="flyby"><div class="ship" id="flyship"></div></div>
 <svg id="water" aria-hidden="true"></svg>
 <div class="wrap">
   <header class="hero">
@@ -177,20 +200,24 @@ footer .heart svg { width: 100%; height: 100%; display: block; }
   <section class="book" id="book"></section>
   <footer>
     <div class="fdove" id="fdove"></div>
+<figure class="quote"><div class="delta" id="delta"></div><div><blockquote>“Make now always the most precious time. Now will never come again.”</blockquote><figcaption>Jean-Luc Picard</figcaption></div></figure>
     <div>These have no expiry and no blackout dates. You can hand me one any day you want, or two on the same night if it's been a hard week. Whichever one you pick, the only answer you'll ever get from me is "Say no more."</div>
     <div class="sig">Love, Jah <span class="heart" id="heart"></span></div>
   </footer>
 </div>
 <div class="meander" id="m2"></div>
 
-<script src="jess-art.js?v=5f"></script>
-<script src="rose.js?v=5f"></script>
-<script src="water.js?v=5f"></script>
-<script src="dove.js?v=5f"></script>
+<script src="jess-art.js?v=5g"></script>
+<script src="rose.js?v=5g"></script>
+<script src="water.js?v=5g"></script>
+<script src="dove.js?v=5g"></script>
+<script src="trek.js?v=5g"></script>
 <script>const MODE = "frame"; document.body.classList.add(MODE);</script>
 <script>
 document.getElementById("rose").insertAdjacentHTML("afterbegin", ROSE.svg("hero"));
 document.getElementById("fdove").innerHTML = DOVE.svg("fd");
+document.getElementById("flyship").innerHTML = TREK.ship();
+document.getElementById("delta").innerHTML = TREK.delta();
 document.getElementById("heart").innerHTML = ART.heartFlag("sig");
 
 // Her tattoo: Greek vases in both top corners, pouring water.
