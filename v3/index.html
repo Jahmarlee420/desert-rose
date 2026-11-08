@@ -58,7 +58,7 @@ body { overflow-x: hidden; }
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes rise { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
 
-.hero-text { display: grid; gap: 6px; min-width: 0; }
+.hero-text { display: grid; gap: 6px; min-width: 0; justify-items: start; }
 .greet { font-family: var(--greek); color: var(--gold); font-size: 20px; letter-spacing: .04em; animation: rise .8s ease 1.4s both; }
 h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(40px, 8vw, 60px); line-height: 1; letter-spacing: .02em; animation: rise .8s ease 1.6s both; }
 .orn { display: flex; align-items: center; gap: 10px; width: min(260px, 70%); animation: rise .8s ease 1.8s both; }
@@ -71,6 +71,7 @@ h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(
   .hero { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 12px; }
   .rose { width: 150px; }
   .orn { margin: 0 auto; }
+  .hero-text { justify-items: center; }
 }
 
 /* tickets */
@@ -162,8 +163,8 @@ footer .sig { font-family: var(--display); font-size: 28px; color: var(--gold); 
 </div>
 <div class="meander" id="m2"></div>
 
-<script src="jess-art.js?v=3d"></script>
-<script src="rose.js?v=3d"></script>
+<script src="jess-art.js?v=3e"></script>
+<script src="rose.js?v=3e"></script>
 <script>
 document.getElementById("rose").insertAdjacentHTML("afterbegin", ROSE.svg("hero"));
 // Dove in flight carrying an olive branch.
