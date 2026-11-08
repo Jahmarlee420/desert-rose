@@ -36,7 +36,7 @@ const ROSE = (() => {
     return `<svg viewBox="-125 -95 250 345" aria-hidden="true">
       <defs>
         <linearGradient id="${id}p" x1="0" y1="30" x2="0" y2="-60" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5a0718"/><stop offset=".45" stop-color="#a3132f"/><stop offset=".85" stop-color="#e2405f"/><stop offset="1" stop-color="#ff7f99"/></linearGradient>
-        <linearGradient id="${id}b" x1="0" y1="2" x2="0" y2="-42" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4d0717"/><stop offset=".6" stop-color="#8e1230"/><stop offset="1" stop-color="#c22a4c"/></linearGradient>
+        <linearGradient id="${id}b" x1="0" y1="2" x2="0" y2="-48" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8a0d2b"/><stop offset=".5" stop-color="#cc1f43"/><stop offset="1" stop-color="#f45a7a"/></linearGradient>
         <linearGradient id="${id}f" x1="0" y1="30" x2="0" y2="-20" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7a0b24"/><stop offset=".5" stop-color="#c62845"/><stop offset="1" stop-color="#f4637f"/></linearGradient>
         <radialGradient id="${id}sheen" cx=".35" cy=".3" r=".6"><stop offset="0" stop-color="#ffd6df" stop-opacity=".35"/><stop offset="1" stop-color="#ffd6df" stop-opacity="0"/></radialGradient>
         <radialGradient id="${id}glow"><stop offset="0" stop-color="#ff5c86" stop-opacity=".4"/><stop offset=".55" stop-color="#ff5c86" stop-opacity=".08"/><stop offset="1" stop-color="#ff5c86" stop-opacity="0"/></radialGradient>
@@ -45,14 +45,19 @@ const ROSE = (() => {
         <linearGradient id="${id}sand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8c08a"/><stop offset="1" stop-color="#a87a4c"/></linearGradient>
         <filter id="${id}sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1e0009" flood-opacity=".6"/></filter>
       </defs>
-      <circle class="glow" cx="0" cy="-14" r="110" fill="url(#${id}glow)"/>
+      <circle class="glow" cx="0" cy="-26" r="118" fill="url(#${id}glow)"/>
       <g class="plant">
         <path class="stem" d="M0 232 C 18 192, -22 142, 6 92 C 18 64, 4 46, 0 32" stroke="url(#${id}stem)" stroke-width="6" fill="none" stroke-linecap="round"/>
         <path class="thorn" d="M5 196 l10 -5 l-8 10z M-11 150 l-10 -3 l8 8z M9 74 l9 -6 l-7 10z" fill="#3a5220"/>
         <g class="leaf r" style="--d:.55s"><path d="M-1 164 C 26 140, 64 138, 88 148 C 62 172, 26 176, -1 164Z" fill="url(#${id}leaf)"/><path d="M-1 164 C 32 156, 62 152, 88 148" stroke="#2f4419" stroke-width="1.3" fill="none"/><path d="M30 158 l8 -10 M50 154 l8 -9 M30 159 l6 9 M50 155 l6 8" stroke="#2f4419" stroke-width=".7" opacity=".7"/></g>
         <g class="leaf l" style="--d:.7s"><path d="M-4 120 C -32 98, -68 98, -90 110 C -64 132, -28 134, -4 120Z" fill="url(#${id}leaf)"/><path d="M-4 120 C -36 114, -64 112, -90 110" stroke="#2f4419" stroke-width="1.3" fill="none"/><path d="M-34 114 l-8 -9 M-54 112 l-8 -8 M-34 115 l-6 9 M-54 113 l-6 8" stroke="#2f4419" stroke-width=".7" opacity=".7"/></g>
-        <path class="sepals" d="M-4 30 C -14 33, -24 38, -32 46 M4 30 C 14 33, 24 38, 32 46 M0 33 C -2 39, -4 45, -7 51" stroke="#3f5a2a" stroke-width="3" fill="none" stroke-linecap="round"/>
-        <g><g class="spin"><g class="head">${head}</g></g></g>
+        <g class="sepals">
+          <path class="sep" data-bx="-4" data-by="30" data-a="112" d="M-4 30 C -14 32, -24 37, -33 46 C -26 42, -16 38, -4 33Z" fill="#46632a" stroke="#3a5220" stroke-width="1.2" stroke-linejoin="round"/>
+          <path class="sep" data-bx="4" data-by="30" data-a="-112" d="M4 30 C 14 32, 24 37, 33 46 C 26 42, 16 38, 4 33Z" fill="#46632a" stroke="#3a5220" stroke-width="1.2" stroke-linejoin="round"/>
+          <path d="M0 33 C -2 39, -4 45, -7 51" stroke="#3f5a2a" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        </g>
+        <!-- the head is drawn compact, then stretched upward from its base into a tall, high-centred rose -->
+        <g><g class="spin"><g class="head"><g transform="translate(0 30) scale(.94 1.34) translate(0 -30)">${head}</g></g></g></g>
       </g>
       <path class="mound" d="M-110 248 C -70 222, -30 214, 0 214 C 32 214, 72 224, 112 248Z" fill="url(#${id}sand)"/>
       <clipPath id="${id}mclip"><path d="M-110 248 C -70 222, -30 214, 0 214 C 32 214, 72 224, 112 248Z"/></clipPath>
