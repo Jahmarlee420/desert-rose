@@ -44,7 +44,7 @@ p { margin: 0; font-size: 11.5pt; line-height: 1.28; color: #2e4559; }
 .cover .vase.l { left: 6px; } .cover .vase.r { right: 6px; transform: scaleX(-1); }
 .cover .vase svg, .cover .crose svg, .cover .ship svg { display: block; width: 100%; height: auto; overflow: visible; }
 .cover .crose { position: absolute; left: 1.02in; bottom: 0.1in; width: 0.82in; z-index: 1; }
-.cover .ship { position: absolute; left: 2.55in; top: 0.1in; width: 0.62in; z-index: 1; filter: drop-shadow(0 0 3px rgba(120,200,255,.4)); }
+.cover .ship { position: absolute; left: 3.72in; top: 0.12in; width: 0.62in; z-index: 1; filter: drop-shadow(0 0 3px rgba(120,200,255,.4)); }
 .cover .text { position: absolute; left: 2.05in; right: 1.7in; top: 0.3in; display: grid; gap: 1px; justify-items: start; z-index: 2; }
 .cover .greet { font-family: var(--greek); color: var(--gold); font-size: 11pt; }
 .cover h1 { font-family: var(--display); font-weight: 400; font-size: 30pt; line-height: 1; margin: 0; }
@@ -140,15 +140,17 @@ function channel(svg, d, k = 1) {
   el("path", { d, stroke: "#3fb7b0", "stroke-opacity": .55, "stroke-width": 3.6 * k, fill: "none", "stroke-linecap": "round", "stroke-linejoin": "round" }, svg);
   el("path", { d, stroke: "#e9fffd", "stroke-opacity": .65, "stroke-width": .9 * k, fill: "none", "stroke-linecap": "round", "stroke-dasharray": "9 5 3 14 6 21" }, svg);
 }
-function frame(card) {
+// the side channels start at yL / yR: on the cover that's where each pour lands, so no water runs up above a pour
+function frame(card, yL, yR) {
   const svg = card.querySelector(".water"), r = card.getBoundingClientRect();
   const W = r.width, H = r.height, i = 7, rad = 10;
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-  channel(svg, `M${i} ${i + rad} V${H - i - rad} Q${i} ${H - i} ${i + rad} ${H - i} H${W - i - rad} Q${W - i} ${H - i} ${W - i} ${H - i - rad} V${i + rad}`);
+  if (yL !== undefined) channel(svg, `M${i} ${yL} V${H - i - rad} Q${i} ${H - i} ${i + rad} ${H - i} H${W - i - rad} Q${W - i} ${H - i} ${W - i} ${H - i - rad} V${yR}`);
   return { svg, r, W, H, i };
 }
-frame(document.getElementById("closing"));
+frame(document.getElementById("closing"), 17, 17);
 const cover = frame(document.getElementById("cover"));
+const landing = [];
 [[".cover .vase.l .mouth", -1, cover.i], [".cover .vase.r .mouth", 1, cover.W - cover.i]].forEach(([sel, dir, cx]) => {
   const m = document.querySelector(sel).getBoundingClientRect();
   const mx = m.left + m.width / 2 - cover.r.left, my = m.top + m.height / 2 - cover.r.top;
@@ -156,7 +158,10 @@ const cover = frame(document.getElementById("cover"));
   for (let k = 0; k <= N; k++) { const u = k / N, dy = u * fall, x = mx + dir * WATER.K * Math.sqrt(dy), w = Math.max(1.4, 4.6 - 3 * u); L.push(`${(x - w / 2).toFixed(1)} ${(my + dy).toFixed(1)}`); R.unshift(`${(x + w / 2).toFixed(1)} ${(my + dy).toFixed(1)}`); }
   el("path", { d: `M${L.join(" L")} L${R.join(" L")}Z`, fill: "#bdf1ee", "fill-opacity": .75 }, cover.svg);
   el("ellipse", { cx, cy: my + fall + 3, rx: 4, ry: 7, fill: "#d4f7f4", opacity: .3 }, cover.svg);
+  landing.push(my + fall);
 });
+frame(document.getElementById("cover"), landing[0], landing[1]);
+[...cover.svg.children].slice(-3).reverse().forEach(n => cover.svg.prepend(n));   // the channel sits under the pours
 const mound = document.querySelector("#crose .mound").getBoundingClientRect();
 channel(cover.svg, WATER.winding(cover.i, mound.bottom - cover.r.top - 34, mound.left + mound.width / 2 - cover.r.left, mound.bottom - cover.r.top - 4), .55);
 </script>
