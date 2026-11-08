@@ -53,9 +53,11 @@ const TREK = (() => {
   }
   // Communicator-style badge: a bevelled, brushed-gold delta over a polished silver oval.
   function delta(id = "dl") {
-    const DELTA = "M20 2 C 23.5 14, 28 30, 33 42 C 27 37, 23.5 35.5, 20 35.5 C 16.5 35.5, 13 37, 7 42 C 12 30, 16.5 14, 20 2Z";
+    // badge proportions: oval about 1.6x the delta's width; delta tip well above the oval;
+    // a deep curved cut in the base (about a quarter of its height) between two sharp feet just below the oval
+    const DELTA = "M20 1.5 C 23 13, 27.6 29, 33.5 43 C 28 37.2, 24 32, 20 32 C 16 32, 12 37.2, 6.5 43 C 12.4 29, 17 13, 20 1.5Z";
     const brush = Array.from({ length: 22 }, (_, i) => `<path d="M0 ${4 + i * 1.8} H40" stroke="${i % 2 ? "#fff6d6" : "#7a5a20"}" stroke-width=".25" opacity="${i % 2 ? .35 : .18}"/>`).join("");
-    return `<svg viewBox="0 0 40 46" aria-hidden="true">
+    return `<svg viewBox="-3 0 46 46" aria-hidden="true">
       <defs>
         <linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff1bf"/><stop offset=".28" stop-color="#e8c56f"/><stop offset=".55" stop-color="#c79a3e"/><stop offset=".78" stop-color="#f2d68a"/><stop offset="1" stop-color="#8a6526"/></linearGradient>
         <linearGradient id="${id}gl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".75"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/></linearGradient>
@@ -65,10 +67,10 @@ const TREK = (() => {
         <filter id="${id}d" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx=".6" dy="1.2" stdDeviation=".9" flood-color="#000" flood-opacity=".55"/></filter>
       </defs>
       <g filter="url(#${id}d)">
-        <ellipse cx="20" cy="27.5" rx="17.4" ry="11.4" fill="#5d6873"/>
-        <ellipse cx="20" cy="27" rx="17" ry="11" fill="url(#${id}s)"/>
-        <ellipse cx="20" cy="27" rx="15.4" ry="9.6" fill="none" stroke="#ffffff" stroke-opacity=".55" stroke-width=".5"/>
-        <ellipse cx="14" cy="22.5" rx="7" ry="3" fill="url(#${id}sh)"/>
+        <ellipse cx="20" cy="28.5" rx="21.4" ry="13" fill="#5d6873"/>
+        <ellipse cx="20" cy="28" rx="21" ry="12.6" fill="url(#${id}s)"/>
+        <ellipse cx="20" cy="28" rx="19.2" ry="11" fill="none" stroke="#ffffff" stroke-opacity=".55" stroke-width=".5"/>
+        <ellipse cx="11" cy="22.5" rx="8" ry="3.2" fill="url(#${id}sh)"/>
         <path d="${DELTA}" fill="#6b4c1a" transform="translate(.5 .7)"/>
         <path d="${DELTA}" fill="url(#${id}g)"/>
         <g clip-path="url(#${id}c)">
@@ -78,7 +80,7 @@ const TREK = (() => {
           <path d="${DELTA}" fill="none" stroke="#7a5a20" stroke-width="1" opacity=".55" transform="translate(.45 .5)"/>
         </g>
         <path d="${DELTA}" fill="none" stroke="#5b4214" stroke-width=".5"/>
-        <path d="M20 5.5 C 21.6 13, 24.4 25, 27.6 34.6" stroke="#fffbe8" stroke-width=".6" fill="none" opacity=".75"/>      </g>
+        <path d="M20 5 C 21.8 13, 24.6 25, 28.4 35" stroke="#fffbe8" stroke-width=".6" fill="none" opacity=".75"/>      </g>
     </svg>`;
   }
   return { ship, delta };
