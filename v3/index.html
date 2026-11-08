@@ -131,6 +131,7 @@ footer .fdove { width: 170px; height: 104px; }
 footer .fdove svg { display: block; width: 100%; height: 100%; animation: bob 3.4s ease-in-out infinite; }
 footer .fdove .wing { transform-box: fill-box; transform-origin: 40% 100%; animation: flap .6s ease-in-out infinite alternate; }
 /* two vases in the top corners pour down the page edges into a river that feeds the rose's sand bed */
+.vases { position: absolute; left: 0; right: 0; top: 0; height: 140px; overflow: hidden; z-index: 3; pointer-events: none; }
 .vase { position: absolute; top: 22px; width: 110px; z-index: 3; pointer-events: none; }
 .vase.l { left: -33px; }
 .vase.r { right: -33px; transform: scaleX(-1); }
@@ -148,7 +149,7 @@ footer .heart svg { width: 100%; height: 100%; display: block; }
 </head><body>
 <canvas id="stars"></canvas>
 <div class="meander" id="m1"></div>
-<div class="vase l"></div><div class="vase r"></div>
+<div class="vases"><div class="vase l"></div><div class="vase r"></div></div>
 <svg id="river" aria-hidden="true"></svg>
 <div class="wrap">
   <header class="hero">
@@ -171,8 +172,8 @@ footer .heart svg { width: 100%; height: 100%; display: block; }
 </div>
 <div class="meander" id="m2"></div>
 
-<script src="jess-art.js?v=3i"></script>
-<script src="rose.js?v=3i"></script>
+<script src="jess-art.js?v=3j"></script>
+<script src="rose.js?v=3j"></script>
 <script>
 document.getElementById("rose").insertAdjacentHTML("afterbegin", ROSE.svg("hero"));
 // Dove in flight carrying an olive branch.
