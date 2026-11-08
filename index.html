@@ -143,6 +143,19 @@ footer .fdove .wing.far { animation-name: wingbeat-far; animation-delay: -.05s; 
 @keyframes wingbeat-far { 0% { transform: scaleY(1) rotate(-2deg); } 42% { transform: scaleY(-.4) rotate(5deg); } 55% { transform: scaleY(-.44) rotate(5deg); } 100% { transform: scaleY(1) rotate(-2deg); } }
 @keyframes lift { 0%, 100% { transform: translateY(2px); } 45% { transform: translateY(-5px); } }
 /* v4: detailed hydria vases in the top corners with live water */
+/* the Enterprise drifts in from the distance through the open band of sky, then jumps to warp */
+/* sits behind the page content (z-index 0) so the rose and vases pass in front of it; route set by flyby() */
+.flyby { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 0; pointer-events: none; }
+.flyby .ship { position: absolute; left: 0; top: 0; opacity: 0; transform-origin: 0 50%; filter: drop-shadow(0 0 5px rgba(120, 200, 255, .35)); }
+.flyby .ship svg { display: block; width: 100%; height: auto; }
+.flyby .warp, .flyby .deflector { animation: nacglow 1.8s ease-in-out infinite; }
+@keyframes nacglow { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .flyby { display: none; } }
+footer .quote { display: flex; gap: 14px; align-items: center; margin: 0 0 10px; max-width: 46ch; }
+footer .quote .delta { width: 34px; flex: none; }
+footer .quote .delta svg { display: block; width: 100%; height: auto; }
+footer .quote blockquote { margin: 0; font-family: var(--display); font-size: 19px; line-height: 1.35; color: #eef3f7; }
+footer .quote figcaption { margin-top: 4px; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); }
 .vases { position: absolute; left: 0; right: 0; top: 0; height: 160px; overflow: hidden; z-index: 3; pointer-events: none; }
 .vase { position: absolute; top: 20px; width: 136px; }
 .vase.l { left: 0; }
@@ -161,6 +174,7 @@ footer .heart svg { width: 100%; height: 100%; display: block; }
 <canvas id="stars"></canvas>
 <div class="meander" id="m1"></div>
 <div class="vases"><div class="vase l"></div><div class="vase r"></div></div>
+<div class="flyby"><div class="ship" id="flyship"></div></div>
 <svg id="water" aria-hidden="true"></svg>
 <div class="wrap">
   <header class="hero">
@@ -177,20 +191,63 @@ footer .heart svg { width: 100%; height: 100%; display: block; }
   <section class="book" id="book"></section>
   <footer>
     <div class="fdove" id="fdove"></div>
+<figure class="quote"><div class="delta" id="delta"></div><div><blockquote>“Make now always the most precious time. Now will never come again.”</blockquote><figcaption>Jean-Luc Picard</figcaption></div></figure>
     <div>These have no expiry and no blackout dates. You can hand me one any day you want, or two on the same night if it's been a hard week. Whichever one you pick, the only answer you'll ever get from me is "Say no more."</div>
     <div class="sig">Love, Jah <span class="heart" id="heart"></span></div>
   </footer>
 </div>
 <div class="meander" id="m2"></div>
 
-<script src="jess-art.js?v=5f"></script>
-<script src="rose.js?v=5f"></script>
-<script src="water.js?v=5f"></script>
-<script src="dove.js?v=5f"></script>
+<script src="jess-art.js?v=5h"></script>
+<script src="rose.js?v=5h"></script>
+<script src="water.js?v=5h"></script>
+<script src="dove.js?v=5h"></script>
+<script src="trek.js?v=5h"></script>
 <script>const MODE = "frame"; document.body.classList.add(MODE);</script>
 <script>
 document.getElementById("rose").insertAdjacentHTML("afterbegin", ROSE.svg("hero"));
 document.getElementById("fdove").innerHTML = DOVE.svg("fd");
+document.getElementById("flyship").innerHTML = TREK.ship();
+
+// The Enterprise drifts in from the distance and jumps to warp. Routed from live layout:
+// through the open sky between the vases when there's room, otherwise behind the rose.
+let flybyAnim = null;
+function flyby() {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const ship = document.getElementById("flyship"), sx = scrollX, sy = scrollY;
+  const R = s => document.querySelector(s).getBoundingClientRect();
+  const vl = R(".vase.l svg > g > path:nth-of-type(5)"), vr = R(".vase.r svg > g > path:nth-of-type(5)"), head = R(".rose .head");
+  const wide = vr.left - vl.right > 520;
+  const w = wide ? 96 : 62, h = w * 44 / 104, warp = 2.4, cruise = .85;
+  ship.style.width = w + "px";
+  let x0, xm, x2, y;
+  if (wide) {
+    y = 60 + sy;
+    x0 = vl.right + sx + 60;
+    x2 = vr.left + sx - 30 - w * cruise * warp - 24;
+    xm = x0 + (x2 - x0) * .7;
+  } else {
+    y = head.top + sy + head.height * .3 - h / 2;
+    const limit = document.documentElement.clientWidth - 30;
+    x0 = 24;
+    xm = head.left + sx + head.width / 2 - w * .4;
+    x2 = Math.min(xm + head.width * .55, limit - w * cruise * warp - 24);
+  }
+  const at = (x, yy, s, sxw = 1) => `translate(${x.toFixed(1)}px, ${yy.toFixed(1)}px) scale(${s}) scaleX(${sxw})`;
+  if (flybyAnim) flybyAnim.cancel();
+  flybyAnim = ship.animate([
+    { offset: 0, transform: at(x0, y - 10, .22), opacity: 0 },
+    { offset: .05, transform: at(x0 + (xm - x0) * .12, y - 8, .3), opacity: .9 },
+    { offset: .3, transform: at(xm, y, .78), opacity: 1 },
+    { offset: .4, transform: at(x2, y + 2, cruise), opacity: 1 },
+    { offset: .41, transform: at(x2 + 6, y + 2, cruise, warp), opacity: .95 },
+    { offset: .418, transform: at(x2 + 24, y + 2, cruise, warp), opacity: 0 },
+    { offset: 1, transform: at(x2 + 24, y + 2, cruise, warp), opacity: 0 }
+  ], { duration: 32000, delay: 3500, iterations: Infinity, easing: "linear" });
+}
+setTimeout(flyby, 1200);
+addEventListener("resize", () => { clearTimeout(flyby.t); flyby.t = setTimeout(flyby, 300); });
+document.getElementById("delta").innerHTML = TREK.delta();
 document.getElementById("heart").innerHTML = ART.heartFlag("sig");
 
 // Her tattoo: Greek vases in both top corners, pouring water.
