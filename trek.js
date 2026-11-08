@@ -80,10 +80,10 @@ const TREK = (() => {
           <path d="${DELTA}" fill="none" stroke="#7a5a20" stroke-width="1" opacity=".55" transform="translate(.45 .5)"/>
         </g>
         <path d="${DELTA}" fill="none" stroke="#5b4214" stroke-width=".5"/>
-        <!-- centre slit: a tapered cut from under the tip down to the curved base, with a lit bevel on one side -->
-        <path d="M19.75 9 L20.25 9 L21.1 32.4 L18.9 32.4Z" fill="#3a2a0c"/>
-        <path d="M20.25 9 L21.1 32.4" stroke="#fff3c9" stroke-width=".35" opacity=".8"/>
-        <path d="M19.75 9 L18.9 32.4" stroke="#2a1d07" stroke-width=".3" opacity=".8"/>
+        <!-- centre slit: a short tapered cut centred between the tip (y 1.5) and the base curve (y 32), touching neither -->
+        <path d="M20 10.5 C 20.4 10.5, 20.9 18, 20.9 22.6 Q 20 23.4 19.1 22.6 C 19.1 18, 19.6 10.5, 20 10.5Z" fill="#3a2a0c"/>
+        <path d="M20.2 10.8 C 20.6 15, 20.9 19, 20.9 22.4" stroke="#fff3c9" stroke-width=".35" fill="none" opacity=".8"/>
+        <path d="M19.8 10.8 C 19.4 15, 19.1 19, 19.1 22.4" stroke="#2a1d07" stroke-width=".3" fill="none" opacity=".8"/>
         <path d="M20 5 C 21.8 13, 24.6 25, 28.4 35" stroke="#fffbe8" stroke-width=".6" fill="none" opacity=".75"/>      </g>
     </svg>`;
   }
