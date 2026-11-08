@@ -210,11 +210,11 @@ footer .heart svg { width: 100%; height: 100%; display: block; }
 </div>
 <div class="meander" id="m2"></div>
 
-<script src="jess-art.js?v=5t"></script>
-<script src="rose.js?v=5t"></script>
-<script src="water.js?v=5t"></script>
-<script src="dove.js?v=5t"></script>
-<script src="trek.js?v=5t"></script>
+<script src="jess-art.js?v=5u"></script>
+<script src="rose.js?v=5u"></script>
+<script src="water.js?v=5u"></script>
+<script src="dove.js?v=5u"></script>
+<script src="trek.js?v=5u"></script>
 <script>const MODE = "frame"; document.body.classList.add(MODE);</script>
 <script>
 document.getElementById("rose").insertAdjacentHTML("afterbegin", ROSE.svg("hero"));
@@ -342,7 +342,8 @@ WATER.init(MODE);
   const bend = (D, y) => D * Math.pow(Math.max(0, 232 - y) / 200, 1.6);
   let D = 0, vD = 0, A = 0, vA = 0;   // stem bend and bloom nod, each a damped spring
   const seps = [...document.querySelectorAll(".rose .sep")].map(el => ({ el, bx: el.dataset.bx, by: el.dataset.by, a: +el.dataset.a }));
-  const petals = [...document.querySelectorAll(".rose .pt")].map(el => ({ el, bx: +el.dataset.bx, by: +el.dataset.by, a: +el.dataset.a, s: +el.dataset.s, o: +el.dataset.o, ruffle: el.classList.contains("ruffle") }));
+  const headEl = document.querySelector(".rose .head");
+  let frameNo = 0;
   const c = document.getElementById("sand"), ctx = c.getContext("2d");
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   let W, H, grains = [], last = performance.now();
@@ -374,17 +375,13 @@ WATER.init(MODE);
       sepals.setAttribute("transform", `translate(${bend(D, 40).toFixed(2)} 0) rotate(${A.toFixed(2)} 0 40)`);
       bloom.setAttribute("transform", `translate(${bend(D, 32).toFixed(2)} 0) rotate(${A.toFixed(2)} 0 32)`);
     }
-    // Bloom: the bud opens over ~3.5s, inner petals first and the outer flares last; then the outer petals ruffle in the gusts.
-    const P = Math.min(1, Math.max(0, (tl - 900) / 3500));
+    // Bloom: the bud opens over ~4.5s from the outside in, like a real rose; afterwards the petals stir in the gusts.
+    const P = Math.min(1, Math.max(0, (tl - 900) / 4500));
     // the green sepals hug the bud, then peel back first as it starts to open
     const qs0 = Math.min(1, P / .35), qs = 1 - Math.pow(1 - qs0, 3);
     seps.forEach(sp => sp.el.setAttribute("transform", `rotate(${(sp.a * (1 - qs)).toFixed(2)} ${sp.bx} ${sp.by})`));
-    petals.forEach((pt, i) => {
-      const q0 = Math.min(1, Math.max(0, (P - pt.o * .55) / .45)), q = 1 - Math.pow(1 - q0, 3);
-      const ang = pt.a * (1 - q) + (pt.ruffle && q0 >= 1 ? Math.sign(pt.a) * -1 * (gust - .6) * 2.4 * (.7 + .3 * Math.sin(t / 160 + i)) : 0);
-      const sc = pt.s + (1 - pt.s) * q;
-      pt.el.setAttribute("transform", `rotate(${ang.toFixed(2)} ${pt.bx} ${pt.by}) translate(${pt.bx} ${pt.by}) scale(${sc.toFixed(3)}) translate(${-pt.bx} ${-pt.by})`);
-    });
+    // regenerate the petals every frame while blooming, then every third frame for the gentle stir
+    if (P < 1 || (frameNo++ % 3 === 0)) headEl.innerHTML = ROSE.head(P, "hero", P < 1 ? 0 : gust - .6, t / 1000);
     if (tl > 2600) {
       // leaves ride the bending stem and flutter harder in strong gusts
       const flap = (1.5 + 6 * Math.max(0, gust - .3)) * (.6 + .4 * Math.sin(t / 210)) + vD * .04;
