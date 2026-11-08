@@ -36,7 +36,7 @@ const TATREEZ = (c, c2) => {
 const GREEK_NUM = ["α΄", "β΄", "γ΄", "δ΄", "ε΄", "ϛ΄", "ζ΄"];
 const VOUCHERS = [
   { id: "d1", kind: "dinner", title: "Dinner in, chef's choice", body: "I plan a surprise menu, cook every course and set the table like a fancy restaurant. All you have to do is show up hungry.", fine: "Dessert included. Non-negotiable." },
-  { id: "s1", kind: "study", title: "Quiet-house study night", body: "We turn the phones on silent and the house goes on lockdown. Coffee and snacks show up at your desk right on schedule.", fine: "Interruptions only for refills." },
+  { id: "s1", kind: "study", title: "Quiet-house study night", body: "We turn the phones on silent and the house goes on lockdown. Coffee and snacks show up on the couch or in bed, right on schedule.", fine: "Interruptions only for refills." },
   { id: "d2", kind: "dinner", title: "Home-cooked, you name it", body: "You name it, I make it. I do the shopping, the cooking, the plating and every last dish after. You just eat.", fine: "Kitchen cleanup included." },
   { id: "s2", kind: "study", title: "Flashcard quiz master", body: "I'm your personal quiz master. I drill you on whatever you're studying, for as long as you want, and you won't hear one complaint.", fine: "Right answers earn snacks." },
   { id: "d3", kind: "dinner", title: "Takeout, any spot", body: "Pick your favourite spot. I order it, go grab it and set it all out so you never have to leave the couch.", fine: "Comes with a Survivor binge." },
