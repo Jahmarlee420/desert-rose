@@ -1,0 +1,163 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Jess Vouchers v5 (print)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=GFS+Didot&family=Reem+Kufi:wght@500&family=Alegreya+Sans:wght@400;500;700&display=swap">
+<style>
+/* Two letter pages of cards in the digital ticket shape (5.6 x 2 in): cover + 4 tickets, then 3 tickets + closing card.
+   Cover and closing card carry the digital page's night sky, painted vases, water border, rose, dove and quote. */
+@page { size: letter; margin: 0.3in 0.45in; }
+:root {
+  --night: #0f2236; --sea-2: #1a3a57; --foam: #eef8f7; --ink: #10263d; --muted: #557086;
+  --aegean: #0d4f8b; --aqua: #3fb7b0; --rose: #e5648d; --rose-soft: #ff9db4; --gold: #d9b26a;
+  --display: "Marcellus", Georgia, serif; --greek: "GFS Didot", Georgia, serif;
+  --arabic: "Reem Kufi", "Segoe UI", sans-serif; --body: "Alegreya Sans", Arial, sans-serif;
+}
+* { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+html, body { margin: 0; background: #fff; color: var(--ink); font-family: var(--body); }
+.page { display: grid; grid-auto-rows: 2in; gap: 0.08in; justify-content: center; break-after: page; }
+.page:last-child { break-after: auto; }
+.card { position: relative; width: 5.6in; height: 2in; border-radius: 9px; overflow: hidden; outline: 1px solid #9fb3c4; }
+
+/* tickets: same build as the digital ones */
+.ticket { --kind: var(--rose); --ic: var(--ink); --band: var(--foam); display: grid; grid-template-columns: 1fr 1.12in; background: var(--foam); overflow: visible; }
+.ticket.study { --kind: var(--aegean); --ic: var(--foam); --band: var(--aegean); }
+.notch { position: absolute; right: calc(1.12in - 9px); width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 1px solid #9fb3c4; z-index: 2; }
+.notch.t { top: -10px; } .notch.b { bottom: -10px; }
+.main { padding: 0 0.22in 0.14in; display: flex; flex-direction: column; gap: 4px; min-width: 0; border-radius: 9px 0 0 9px; overflow: hidden; }
+.mband { height: 13px; margin: 0 -0.22in 4px; }
+.kind { font-family: var(--display); font-size: 8.5pt; letter-spacing: .16em; text-transform: uppercase; color: var(--kind); }
+h2 { font-family: var(--display); font-weight: 400; font-size: 20pt; line-height: 1.05; margin: 0; color: var(--aegean); }
+p { margin: 0; font-size: 11.5pt; line-height: 1.28; color: #2e4559; }
+.fine { font-size: 9pt; color: var(--muted); font-style: italic; margin-top: auto; }
+.stub { background: var(--kind); border-left: 2px dashed var(--foam); border-radius: 0 9px 9px 0; overflow: hidden; display: grid; grid-template-rows: auto auto 1fr auto; justify-items: center; text-align: center; }
+.stitch { width: 100%; height: 17px; background-color: var(--foam); }
+.no { font-family: var(--greek); font-size: 18pt; color: var(--foam); line-height: 1.2; }
+.icon { width: 0.42in; color: var(--ic); align-self: center; }
+.icon svg { display: block; width: 100%; height: auto; }
+.pill { margin: 0 0.1in 0.12in; border: 2px solid var(--foam); border-radius: 999px; color: var(--foam); font: 700 10pt var(--body); padding: 3px 10px; white-space: nowrap; }
+
+/* night cards */
+.night { background: radial-gradient(3in 1.6in at 25% 20%, rgba(229,100,141,.14), transparent 70%), radial-gradient(7in 3in at 50% -30%, var(--sea-2), var(--night)); color: var(--foam); }
+.night .water { position: absolute; inset: 0; width: 100%; height: 100%; }
+.night .stars { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cover .vase { position: absolute; top: 2px; width: 0.98in; z-index: 2; }
+.cover .vase.l { left: 6px; } .cover .vase.r { right: 6px; transform: scaleX(-1); }
+.cover .vase svg, .cover .crose svg, .cover .ship svg { display: block; width: 100%; height: auto; overflow: visible; }
+.cover .crose { position: absolute; left: 1.02in; bottom: 0.1in; width: 0.82in; z-index: 1; }
+.cover .ship { position: absolute; left: 2.55in; top: 0.1in; width: 0.62in; z-index: 1; filter: drop-shadow(0 0 3px rgba(120,200,255,.4)); }
+.cover .text { position: absolute; left: 2.05in; right: 1.7in; top: 0.3in; display: grid; gap: 1px; justify-items: start; z-index: 2; }
+.cover .greet { font-family: var(--greek); color: var(--gold); font-size: 11pt; }
+.cover h1 { font-family: var(--display); font-weight: 400; font-size: 30pt; line-height: 1; margin: 0; }
+.cover .orn { display: flex; align-items: center; gap: 6px; width: 1.8in; margin: 2px 0; }
+.cover .orn i { flex: 1; height: 1px; background: var(--gold); opacity: .7; }
+.cover .orn b { width: 6px; height: 6px; background: var(--rose); transform: rotate(45deg); }
+.cover .arabic { font-family: var(--arabic); color: var(--rose-soft); font-size: 15pt; line-height: 1.2; }
+.cover .line { font-style: italic; font-size: 8.5pt; color: var(--gold); margin-top: 3px; line-height: 1.3; }
+.sig { position: absolute; right: 0.3in; bottom: 0.2in; font-family: var(--display); color: var(--gold); font-size: 13pt; display: flex; align-items: center; gap: 6px; z-index: 2; }
+.sig .heart { width: 19px; height: 18px; } .sig .heart svg { display: block; width: 100%; height: 100%; }
+
+.closing .dove { position: absolute; left: 0.18in; top: 0.12in; width: 1.75in; z-index: 1; }
+.closing .dove svg { display: block; width: 100%; height: auto; }
+.closing .body { position: absolute; left: 2.05in; right: 0.3in; top: 0.2in; display: grid; gap: 7px; z-index: 2; }
+.closing .quote { display: flex; gap: 9px; align-items: center; }
+.closing .delta { width: 34px; flex: none; } .closing .delta svg { display: block; width: 100%; height: auto; }
+.closing blockquote { margin: 0; font-family: var(--display); font-size: 10pt; line-height: 1.3; color: #eef3f7; }
+.closing figcaption { font-size: 7pt; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-top: 2px; }
+.closing .note { font-size: 8.8pt; line-height: 1.35; color: #c9d6e2; padding-right: 1.2in; }
+</style></head>
+<body>
+<div class="page" id="p1">
+  <div class="card night cover" id="cover">
+    <svg class="stars" id="stars"></svg>
+    <svg class="water" id="cwater"></svg>
+    <div class="ship" id="ship"></div>
+    <div class="vase l"></div><div class="vase r"></div>
+    <div class="crose" id="crose"></div>
+    <div class="text">
+      <div class="greet">Χρόνια πολλά</div>
+      <h1>Jess</h1>
+      <div class="orn"><i></i><b></b><i></i></div>
+      <div class="arabic" lang="ar">وردة الصحراء</div>
+      <div class="line">7 vouchers for 7 days of being spoiled. The paper ones count, and there's a digital copy in case you lose these.</div>
+    </div>
+  </div>
+</div>
+<div class="page" id="p2"></div>
+<script src="jess-art.js"></script>
+<script src="rose.js"></script>
+<script src="water.js"></script>
+<script src="dove.js"></script>
+<script src="trek.js"></script>
+<script>
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent && parent.appendChild(e); return e; };
+
+// tickets 1-4 on page 1, 5-7 on page 2, then the closing card
+VOUCHERS.forEach((v, i) => {
+  const t = document.createElement("div");
+  t.className = "card ticket " + v.kind;
+  t.innerHTML = `<span class="notch t"></span><span class="notch b"></span>
+    <div class="main"><div class="mband"></div>
+      <div class="kind">${KIND[v.kind].label}</div>
+      <h2>${v.title}</h2><p>${v.body}</p><div class="fine">${v.fine}</div>
+    </div>
+    <div class="stub"><div class="stitch"></div><div class="no">${GREEK_NUM[i]}</div><div class="icon">${KIND[v.kind].icon}</div><div class="pill">Good for one</div></div>`;
+  t.querySelector(".mband").style.background = MEANDER("#3fb7b0") + " repeat-x";
+  t.querySelector(".mband").style.backgroundSize = "13px 13px";
+  t.querySelector(".stitch").style.backgroundImage = TATREEZ("#a51f2b", "#10263d");
+  t.querySelector(".stitch").style.backgroundSize = "17px 17px";
+  document.getElementById(i < 4 ? "p1" : "p2").appendChild(t);
+});
+const closing = document.createElement("div");
+closing.className = "card night closing"; closing.id = "closing";
+closing.innerHTML = `<svg class="stars"></svg><svg class="water"></svg>
+  <div class="dove" id="dove"></div>
+  <div class="body">
+    <figure class="quote" style="margin:0"><div class="delta" id="delta"></div><div><blockquote>“Make now always the most precious time. Now will never come again.”</blockquote><figcaption>Jean-Luc Picard</figcaption></div></figure>
+    <div class="note">These have no expiry and no blackout dates. You can hand me one any day you want, or two on the same night if it's been a hard week. Whichever one you pick, the only answer you'll ever get from me is “Say no more.”</div>
+  </div>
+  <div class="sig">Love, Jah <span class="heart" id="heart2"></span></div>`;
+document.getElementById("p2").appendChild(closing);
+document.getElementById("cover").insertAdjacentHTML("beforeend", `<div class="sig">Love, Jah <span class="heart" id="heart1"></span></div>`);
+
+document.querySelectorAll(".cover .vase").forEach((v, i) => v.innerHTML = WATER.vase("pv" + i));
+document.getElementById("crose").innerHTML = ROSE.svg("pc");
+document.getElementById("ship").innerHTML = TREK.ship();
+document.getElementById("dove").innerHTML = DOVE.svg("pd");
+document.getElementById("delta").innerHTML = TREK.delta("pdl");
+document.getElementById("heart1").innerHTML = ART.heartFlag("h1");
+document.getElementById("heart2").innerHTML = ART.heartFlag("h2");
+
+// static star field on both night cards
+document.querySelectorAll(".night .stars").forEach(s => {
+  const r = s.getBoundingClientRect(); s.setAttribute("viewBox", `0 0 ${r.width} ${r.height}`);
+  for (let i = 0; i < 46; i++) el("circle", { cx: Math.random() * r.width, cy: Math.random() * r.height * .8, r: .4 + Math.random() * .9, fill: "#fff0d8", opacity: .25 + Math.random() * .5 }, s);
+});
+
+// water: a glassy channel inset around each night card; on the cover the vases pour into it and a winding stream soaks into the sand
+function channel(svg, d, k = 1) {
+  el("path", { d, stroke: "#1f6f6b", "stroke-opacity": .4, "stroke-width": 6 * k, fill: "none", "stroke-linecap": "round", "stroke-linejoin": "round" }, svg);
+  el("path", { d, stroke: "#3fb7b0", "stroke-opacity": .55, "stroke-width": 3.6 * k, fill: "none", "stroke-linecap": "round", "stroke-linejoin": "round" }, svg);
+  el("path", { d, stroke: "#e9fffd", "stroke-opacity": .65, "stroke-width": .9 * k, fill: "none", "stroke-linecap": "round", "stroke-dasharray": "9 5 3 14 6 21" }, svg);
+}
+function frame(card) {
+  const svg = card.querySelector(".water"), r = card.getBoundingClientRect();
+  const W = r.width, H = r.height, i = 7, rad = 10;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  channel(svg, `M${i} ${i + rad} V${H - i - rad} Q${i} ${H - i} ${i + rad} ${H - i} H${W - i - rad} Q${W - i} ${H - i} ${W - i} ${H - i - rad} V${i + rad}`);
+  return { svg, r, W, H, i };
+}
+frame(document.getElementById("closing"));
+const cover = frame(document.getElementById("cover"));
+[[".cover .vase.l .mouth", -1, cover.i], [".cover .vase.r .mouth", 1, cover.W - cover.i]].forEach(([sel, dir, cx]) => {
+  const m = document.querySelector(sel).getBoundingClientRect();
+  const mx = m.left + m.width / 2 - cover.r.left, my = m.top + m.height / 2 - cover.r.top;
+  const fall = Math.max(14, (Math.abs(mx - cx) / WATER.K) ** 2), N = 24, L = [], R = [];
+  for (let k = 0; k <= N; k++) { const u = k / N, dy = u * fall, x = mx + dir * WATER.K * Math.sqrt(dy), w = Math.max(1.4, 4.6 - 3 * u); L.push(`${(x - w / 2).toFixed(1)} ${(my + dy).toFixed(1)}`); R.unshift(`${(x + w / 2).toFixed(1)} ${(my + dy).toFixed(1)}`); }
+  el("path", { d: `M${L.join(" L")} L${R.join(" L")}Z`, fill: "#bdf1ee", "fill-opacity": .75 }, cover.svg);
+  el("ellipse", { cx, cy: my + fall + 3, rx: 4, ry: 7, fill: "#d4f7f4", opacity: .3 }, cover.svg);
+});
+const mound = document.querySelector("#crose .mound").getBoundingClientRect();
+channel(cover.svg, WATER.winding(cover.i, mound.bottom - cover.r.top - 34, mound.left + mound.width / 2 - cover.r.left, mound.bottom - cover.r.top - 4), .55);
+</script>
+</body></html>
