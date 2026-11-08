@@ -119,8 +119,9 @@ const WATER = (() => {
       });
       const g = { W, H, streams, channels: [], glints: [] };
       const bottom = H - 16, r = 24;
-      const m = document.querySelector(".rose .mound").getBoundingClientRect();
-      const bedY = m.bottom + sy - 6, bedX = m.left + m.width / 2 + sx;
+      // the stream runs down to the pool at the foot of the rose's mound and ends inside it (the pool is drawn over the stream's tip)
+      const m = document.querySelector(".rose .pool") ? document.querySelector(".rose .pool").getBoundingClientRect() : document.querySelector(".rose .mound").getBoundingClientRect();
+      const bedY = m.top + m.height * .55 + sy, bedX = m.left + m.width * .14 + sx;
       const paths = streams.map(s => {
         const jy = s.m.y + s.fall, inward = -s.dir;
         s.join = { x: s.cx, y: jy };

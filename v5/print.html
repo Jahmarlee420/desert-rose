@@ -14,29 +14,17 @@
 }
 * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 html, body { margin: 0; background: #fff; color: var(--ink); font-family: var(--body); }
-.page { filter: drop-shadow(0 0 .7px #6f8597); display: grid; grid-auto-rows: auto; gap: 0.08in; justify-content: center; break-after: page; }
+.page { display: grid; grid-auto-rows: auto; gap: 0.08in; justify-content: center; break-after: page; }
 .page:last-child { break-after: auto; }
 .card { position: relative; width: 5.6in; height: 2in; border-radius: 9px; overflow: hidden; outline: 1px solid #9fb3c4; }
 
 /* tickets: same build as the digital ones */
-/* same cut-out shape as the digital tickets: scooped corners, notches and perforation at the tear line; the page's drop-shadow draws the cut line */
+/* same cut-out shape as the digital tickets (scooped corners, notches, perforation), cut with a vector clip-path so every PDF viewer shows it; .cutline draws the cut line */
 .card.ticket { height: 1.7in; }
 .ticket { --kind: var(--rose); --ic: var(--ink); --band: var(--foam); display: grid; grid-template-columns: 1fr 1.12in; background: var(--foam); overflow: visible;
   outline: none; border-radius: 0; --cut: 12px; --tear: 1.12in;
-  -webkit-mask: radial-gradient(circle var(--cut) at 0 0, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
-    radial-gradient(circle var(--cut) at 100% 0, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
-    radial-gradient(circle var(--cut) at 0 100%, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
-    radial-gradient(circle var(--cut) at 100% 100%, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
-    radial-gradient(circle 10px at calc(100% - var(--tear)) 0, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
-    radial-gradient(circle 10px at calc(100% - var(--tear)) 100%, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
-    radial-gradient(circle 2.2px at calc(100% - var(--tear)) 50%, #0000 90%, #000) 0 3px / 100% 10px repeat-y; -webkit-mask-composite: source-in;
-  mask: radial-gradient(circle var(--cut) at 0 0, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
-    radial-gradient(circle var(--cut) at 100% 0, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
-    radial-gradient(circle var(--cut) at 0 100%, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
-    radial-gradient(circle var(--cut) at 100% 100%, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
-    radial-gradient(circle 10px at calc(100% - var(--tear)) 0, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
-    radial-gradient(circle 10px at calc(100% - var(--tear)) 100%, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
-    radial-gradient(circle 2.2px at calc(100% - var(--tear)) 50%, #0000 90%, #000) 0 3px / 100% 10px repeat-y; mask-composite: intersect; }
+}
+.ticket .cutline { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; overflow: visible; }
 .ticket.study { --kind: var(--aegean); --ic: var(--foam); --band: var(--aegean); }
 .notch { display: none; position: absolute; right: calc(1.12in - 9px); width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 1px solid #9fb3c4; z-index: 2; }
 .notch.t { top: -10px; } .notch.b { bottom: -10px; }
@@ -60,7 +48,7 @@ p { margin: 0; font-size: 10.5pt; line-height: 1.26; color: #2e4559; }
 .cover .vase { position: absolute; top: 2px; width: 0.98in; z-index: 2; }
 .cover .vase.l { left: 6px; } .cover .vase.r { right: 6px; transform: scaleX(-1); }
 .cover .vase svg, .cover .crose svg, .cover .ship svg { display: block; width: 100%; height: auto; overflow: visible; }
-.cover .crose { position: absolute; left: 1.02in; bottom: 0.1in; width: 0.82in; z-index: 1; }
+.cover .crose { position: absolute; left: 1.02in; bottom: 0.2in; width: 0.82in; z-index: 1; }
 .cover .ship { position: absolute; left: 3.72in; top: 0.12in; width: 0.62in; z-index: 1; filter: drop-shadow(0 0 3px rgba(120,200,255,.4)); }
 .cover .text { position: absolute; left: 2.05in; right: 1.7in; top: 0.3in; display: grid; gap: 1px; justify-items: start; z-index: 2; }
 .cover .greet { font-family: var(--greek); color: var(--gold); font-size: 11pt; }
@@ -107,6 +95,15 @@ p { margin: 0; font-size: 10.5pt; line-height: 1.26; color: #2e4559; }
 <script src="trek.js"></script>
 <script>
 const NS = "http://www.w3.org/2000/svg";
+// The ticket outline as one vector path: scooped corners, notches top and bottom at the tear line, and perforation holes down it (even-odd fill makes them holes).
+function ticketShape(t) {
+  const W = t.offsetWidth, H = t.offsetHeight, tx = W - t.querySelector(".stub").offsetWidth, r = 12, n = 10, h = 2.2;
+  let d = `M${r} 0 L${tx - n} 0 A${n} ${n} 0 0 0 ${tx + n} 0 L${W - r} 0 A${r} ${r} 0 0 0 ${W} ${r} L${W} ${H - r} A${r} ${r} 0 0 0 ${W - r} ${H} L${tx + n} ${H} A${n} ${n} 0 0 0 ${tx - n} ${H} L${r} ${H} A${r} ${r} 0 0 0 0 ${H - r} L0 ${r} A${r} ${r} 0 0 0 ${r} 0Z`;
+  const outline = d;
+  for (let y = n + 6; y <= H - n - 6; y += 10) d += ` M${tx - h} ${y} a${h} ${h} 0 1 0 ${2 * h} 0 a${h} ${h} 0 1 0 ${-2 * h} 0Z`;
+  t.style.clipPath = `path(evenodd, "${d}")`;
+  t.insertAdjacentHTML("beforeend", `<svg class="cutline" viewBox="0 0 ${W} ${H}"><path d="${outline}" fill="none" stroke="#8ea4b7" stroke-width="1.6"/></svg>`);
+}
 const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent && parent.appendChild(e); return e; };
 
 // tickets 1-4 on page 1, 5-7 on page 2, then the closing card
@@ -124,6 +121,7 @@ VOUCHERS.forEach((v, i) => {
   t.querySelector(".stitch").style.backgroundImage = TATREEZ("#a51f2b", "#10263d");
   t.querySelector(".stitch").style.backgroundSize = "17px 17px";
   document.getElementById(i < 4 ? "p1" : "p2").appendChild(t);
+  ticketShape(t);
 });
 const closing = document.createElement("div");
 closing.className = "card night closing"; closing.id = "closing";
@@ -179,7 +177,9 @@ const landing = [];
 });
 frame(document.getElementById("cover"), landing[0], landing[1]);
 [...cover.svg.children].slice(-3).reverse().forEach(n => cover.svg.prepend(n));   // the channel sits under the pours
-const mound = document.querySelector("#crose .mound").getBoundingClientRect();
-channel(cover.svg, WATER.winding(cover.i, mound.bottom - cover.r.top - 34, mound.left + mound.width / 2 - cover.r.left, mound.bottom - cover.r.top - 4), .55);
+// the stream runs into the pool at the foot of the rose's mound, like the digital page
+const pool = document.querySelector("#crose .pool").getBoundingClientRect();
+const py = pool.top + pool.height * .55 - cover.r.top;
+channel(cover.svg, WATER.winding(cover.i, py - 30, pool.left + pool.width * .14 - cover.r.left, py), .55);
 </script>
 </body></html>

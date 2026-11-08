@@ -99,15 +99,15 @@ const ROSE = (() => {
       <path class="mound" d="M-110 248 C -70 222, -30 214, 0 214 C 32 214, 72 224, 112 248Z" fill="url(#${id}sand)"/>
       <clipPath id="${id}mclip"><path d="M-110 248 C -70 222, -30 214, 0 214 C 32 214, 72 224, 112 248Z"/></clipPath>
       <!-- the stream ends in a shallow pool lapping at the foot of the mound; the sand darkens upward from the waterline as it soaks in -->
-      <linearGradient id="${id}wet" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a3519" stop-opacity="0"/><stop offset=".45" stop-color="#5a3519" stop-opacity=".45"/><stop offset="1" stop-color="#3c220e" stop-opacity=".9"/></linearGradient>
+      <linearGradient id="${id}wet" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a3519" stop-opacity="0"/><stop offset=".3" stop-color="#5a3519" stop-opacity=".55"/><stop offset="1" stop-color="#2e1a0a" stop-opacity=".95"/></linearGradient>
       <linearGradient id="${id}pool" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fe0da" stop-opacity=".75"/><stop offset=".5" stop-color="#3fb7b0" stop-opacity=".7"/><stop offset="1" stop-color="#1f6f6b" stop-opacity=".85"/></linearGradient>
       <g clip-path="url(#${id}mclip)">
-        <path class="wet" d="M-112 250 L-112 232 C -100 229, -90 235, -78 231 C -64 227, -54 236, -40 233 C -26 231, -16 238, -2 237 C 14 236, 26 242, 42 241 C 58 240, 70 245, 86 245 L 114 250Z" fill="url(#${id}wet)"/>
+        <path class="wet" d="M-112 250 L-112 228 C -100 225, -90 232, -78 228 C -64 227, -54 236, -40 233 C -26 231, -16 238, -2 237 C 14 236, 26 242, 42 241 C 58 240, 70 245, 86 245 L 114 250Z" fill="url(#${id}wet)"/>
         <path class="wet wet2" d="M-112 250 L-112 238 C -96 236, -84 241, -68 238 C -50 236, -36 242, -20 241 C -4 240, 10 245, 30 245 L 60 250Z" fill="url(#${id}wet)" opacity=".7"/>
-        <path d="M-112 232 C -100 229, -90 235, -78 231 C -64 227, -54 236, -40 233 C -26 231, -16 238, -2 237 C 14 236, 26 242, 42 241 C 58 240, 70 245, 86 245" stroke="#3f2612" stroke-width=".8" fill="none" opacity=".35"/>
+        <path d="M-112 228 C -100 225, -90 232, -78 228 C -64 227, -54 236, -40 233 C -26 231, -16 238, -2 237 C 14 236, 26 242, 42 241 C 58 240, 70 245, 86 245" stroke="#3f2612" stroke-width="1" fill="none" opacity=".5"/>
       </g>
       <g class="pool">
-        <path d="M-126 249.5 C -121 244.5, -106 243.6, -88 244.4 C -60 245.4, -24 246.4, 12 247.3 C 26 247.7, 36 248.2, 40 249 C 30 251.4, -6 252.6, -46 253.2 C -82 253.6, -112 253.2, -122 252 C -125 251.3, -126.5 250.4, -126 249.5Z" fill="url(#${id}pool)"/>
+        <path d="M-126 249.5 C -121 244.5, -106 243.6, -88 244.4 C -60 245.4, -24 246.4, 12 247.3 C 26 247.7, 36 248.2, 40 249 C 30 251.4, -6 252.6, -46 253.2 C -82 254.6, -112 255.4, -122 254 C -126 252.8, -127 250.8, -126 249.5Z" fill="url(#${id}pool)"/>
         <path d="M-122 247.6 C -108 244.8, -88 244.6, -62 245.4 C -32 246.2, 0 246.9, 30 247.8" stroke="#e9fffd" stroke-width=".9" fill="none" opacity=".55" stroke-linecap="round"/>
         <path d="M-112 251.2 C -90 251.8, -60 251.6, -30 251" stroke="#bff3ef" stroke-width=".6" fill="none" opacity=".35" stroke-linecap="round"/>
         <g class="glisten" fill="#f2fffe"><ellipse cx="-104" cy="248.6" rx="3" ry=".7"/><ellipse cx="-76" cy="249.6" rx="2.2" ry=".55"/><ellipse cx="-44" cy="249.4" rx="2.6" ry=".6"/><ellipse cx="-14" cy="249" rx="1.6" ry=".45"/></g>

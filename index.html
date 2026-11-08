@@ -157,11 +157,11 @@ h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(
 footer { display: grid; gap: 8px; justify-items: start; color: #b9c9d8; font-size: 15px; max-width: 60ch; }
 footer .fdove { width: 210px; height: 174px; margin-bottom: 4px; }
 /* water soaking into the sand bed: a dark wet patch that spreads and settles, with a glint of surface water */
-.rose .wet { transform-box: fill-box; transform-origin: 15% 85%; animation: soak 5s ease-in-out infinite; }
+.rose .wet { transform-box: fill-box; transform-origin: 30% 100%; animation: soak 5s ease-in-out infinite; }
 .rose .wet2 { animation-delay: -2.2s; }
 .rose .glisten ellipse { animation: glint 2.6s ease-in-out infinite; }
 .rose .glisten ellipse:nth-child(2) { animation-delay: -.7s; } .rose .glisten ellipse:nth-child(3) { animation-delay: -1.4s; } .rose .glisten ellipse:nth-child(4) { animation-delay: -2s; }
-@keyframes soak { 0%, 100% { transform: scale(.82); opacity: .7; } 50% { transform: scale(1.1); opacity: 1; } }
+@keyframes soak { 0%, 100% { transform: scale(1, .82); opacity: .75; } 50% { transform: scale(1.04, 1.12); opacity: 1; } }
 @keyframes glint { 0%, 100% { opacity: .1; } 50% { opacity: .8; } }
 footer .fdove svg { display: block; width: 100%; height: 100%; animation: lift .8s ease-in-out infinite; }
 footer .fdove .wing { transform-box: fill-box; transform-origin: 82% 96%; animation: wingbeat .8s cubic-bezier(.45,0,.35,1) infinite; }
@@ -237,11 +237,11 @@ footer .heart svg { width: 100%; height: 100%; display: block; }
 </div>
 <div class="meander" id="m2"></div>
 
-<script src="jess-art.js?v=6a"></script>
-<script src="rose.js?v=6a"></script>
-<script src="water.js?v=6a"></script>
-<script src="dove.js?v=6a"></script>
-<script src="trek.js?v=6a"></script>
+<script src="jess-art.js?v=6c"></script>
+<script src="rose.js?v=6c"></script>
+<script src="water.js?v=6c"></script>
+<script src="dove.js?v=6c"></script>
+<script src="trek.js?v=6c"></script>
 <script>const MODE = "frame"; document.body.classList.add(MODE);</script>
 <script>
 document.getElementById("rose").insertAdjacentHTML("afterbegin", ROSE.svg("hero"));
