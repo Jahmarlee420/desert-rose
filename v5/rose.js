@@ -55,7 +55,7 @@ const ROSE = (() => {
         <path class="thorn" d="M5 196 l10 -5 l-8 10z M-11 150 l-10 -3 l8 8z M9 74 l9 -6 l-7 10z" fill="#3a5220"/>
         <g class="leaf r" style="--d:.55s"><path d="M-1 164 C 26 140, 64 138, 88 148 C 62 172, 26 176, -1 164Z" fill="url(#${id}leaf)"/><path d="M-1 164 C 32 156, 62 152, 88 148" stroke="#2f4419" stroke-width="1.3" fill="none"/><path d="M30 158 l8 -10 M50 154 l8 -9 M30 159 l6 9 M50 155 l6 8" stroke="#2f4419" stroke-width=".7" opacity=".7"/></g>
         <g class="leaf l" style="--d:.7s"><path d="M-4 120 C -32 98, -68 98, -90 110 C -64 132, -28 134, -4 120Z" fill="url(#${id}leaf)"/><path d="M-4 120 C -36 114, -64 112, -90 110" stroke="#2f4419" stroke-width="1.3" fill="none"/><path d="M-34 114 l-8 -9 M-54 112 l-8 -8 M-34 115 l-6 9 M-54 113 l-6 8" stroke="#2f4419" stroke-width=".7" opacity=".7"/></g>
-        <path d="M-6 40 C -14 30, -16 20, -10 14 M6 40 C 14 30, 16 20, 10 14 M0 42 C 0 30, -2 22, 0 16" stroke="#3f5a2a" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path class="sepals" d="M-6 40 C -14 30, -16 20, -10 14 M6 40 C 14 30, 16 20, 10 14 M0 42 C 0 30, -2 22, 0 16" stroke="#3f5a2a" stroke-width="3" fill="none" stroke-linecap="round"/>
         <g transform="scale(1 .86)"><g class="spin"><g class="head">${layers}
           <g class="layer" style="--d:1.4s">${bud}</g>
         </g></g></g>
