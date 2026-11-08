@@ -128,6 +128,13 @@ h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(
 
 footer { display: grid; gap: 8px; justify-items: start; color: #b9c9d8; font-size: 15px; max-width: 60ch; }
 footer .fdove { width: 210px; height: 174px; margin-bottom: 4px; }
+/* water soaking into the sand bed: a dark wet patch that spreads and settles, with a glint of surface water */
+.rose .wet { transform-box: fill-box; transform-origin: 15% 85%; animation: soak 5s ease-in-out infinite; }
+.rose .wet2 { animation-delay: -2.2s; }
+.rose .glisten ellipse { animation: glint 2.6s ease-in-out infinite; }
+.rose .glisten ellipse:nth-child(2) { animation-delay: -.7s; } .rose .glisten ellipse:nth-child(3) { animation-delay: -1.4s; } .rose .glisten ellipse:nth-child(4) { animation-delay: -2s; }
+@keyframes soak { 0%, 100% { transform: scale(.82); opacity: .7; } 50% { transform: scale(1.1); opacity: 1; } }
+@keyframes glint { 0%, 100% { opacity: .1; } 50% { opacity: .8; } }
 footer .fdove svg { display: block; width: 100%; height: 100%; animation: lift .8s ease-in-out infinite; }
 footer .fdove .wing { transform-box: fill-box; transform-origin: 82% 96%; animation: wingbeat .8s cubic-bezier(.45,0,.35,1) infinite; }
 footer .fdove .wing.far { animation-name: wingbeat-far; animation-delay: -.05s; }
@@ -170,16 +177,16 @@ footer .heart svg { width: 100%; height: 100%; display: block; }
   <section class="book" id="book"></section>
   <footer>
     <div class="fdove" id="fdove"></div>
-    <div>No expiry, no blackout dates. Stack two on the same night if it's a hard week. Hand me any one of these and the only response you'll get is "Say no more."</div>
+    <div>These have no expiry and no blackout dates. You can hand me one any day you want, or two on the same night if it's been a hard week. Whichever one you pick, the only answer you'll ever get from me is "Say no more."</div>
     <div class="sig">Love, Jah <span class="heart" id="heart"></span></div>
   </footer>
 </div>
 <div class="meander" id="m2"></div>
 
-<script src="jess-art.js?v=5d"></script>
-<script src="rose.js?v=5d"></script>
-<script src="water.js?v=5d"></script>
-<script src="dove.js?v=5d"></script>
+<script src="jess-art.js?v=5e"></script>
+<script src="rose.js?v=5e"></script>
+<script src="water.js?v=5e"></script>
+<script src="dove.js?v=5e"></script>
 <script>const MODE = "frame"; document.body.classList.add(MODE);</script>
 <script>
 document.getElementById("rose").insertAdjacentHTML("afterbegin", ROSE.svg("hero"));

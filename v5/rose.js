@@ -61,6 +61,13 @@ const ROSE = (() => {
         </g></g></g>
       </g>
       <path class="mound" d="M-110 248 C -70 222, -30 214, 0 214 C 32 214, 72 224, 112 248Z" fill="url(#${id}sand)"/>
+      <clipPath id="${id}mclip"><path d="M-110 248 C -70 222, -30 214, 0 214 C 32 214, 72 224, 112 248Z"/></clipPath>
+      <radialGradient id="${id}wet"><stop offset="0" stop-color="#5e3a1c" stop-opacity=".85"/><stop offset=".55" stop-color="#7a4d27" stop-opacity=".5"/><stop offset="1" stop-color="#7a4d27" stop-opacity="0"/></radialGradient>
+      <g clip-path="url(#${id}mclip)">
+        <ellipse class="wet" cx="-58" cy="250" rx="78" ry="26" fill="url(#${id}wet)"/>
+        <ellipse class="wet wet2" cx="-10" cy="252" rx="54" ry="16" fill="url(#${id}wet)" opacity=".7"/>
+        <g class="glisten" fill="#e9fffd"><ellipse cx="-74" cy="241" rx="2.2" ry=".8"/><ellipse cx="-46" cy="236" rx="1.6" ry=".6"/><ellipse cx="-22" cy="244" rx="1.8" ry=".7"/><ellipse cx="-60" cy="246" rx="1.2" ry=".5"/></g>
+      </g>
       <path d="M-70 236 C -40 226, -16 222, 4 222 M -20 240 C 10 232, 40 232, 70 240" stroke="#f3d6a6" stroke-width="1.2" fill="none" opacity=".55"/>
     </svg>`;
   }
