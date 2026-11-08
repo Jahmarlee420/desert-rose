@@ -51,12 +51,7 @@ body {
 @keyframes spin { to { transform: rotate(360deg); } }
 .glow { transform-box: fill-box; transform-origin: center; animation: pulse 5s ease-in-out 1.5s infinite; }
 
-/* dove with an olive sprig, gliding across now and then */
 body { overflow-x: hidden; }
-.dove { position: absolute; top: 6px; left: 0; width: 58px; z-index: 3; pointer-events: none; animation: fly 30s linear 3.5s infinite both; }
-.dove svg { display: block; animation: bob 3s ease-in-out infinite; }
-.dove .wing { transform-box: fill-box; transform-origin: 30% 100%; animation: flap .45s ease-in-out infinite alternate; }
-@keyframes fly { 0% { transform: translate(-90px, 30px); } 50% { transform: translate(min(1000px, 100vw), -6px); } 100% { transform: translate(min(1000px, 100vw), -6px); } }
 @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 @keyframes flap { from { transform: scaleY(1); } to { transform: scaleY(-.45); } }
 @keyframes pulse { 0%,100% { transform: scale(.92); opacity: .75; } 50% { transform: scale(1.08); opacity: 1; } }
@@ -131,12 +126,10 @@ h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(
 @keyframes burst { to { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; } }
 
 footer { display: grid; gap: 8px; justify-items: start; color: #b9c9d8; font-size: 15px; max-width: 60ch; }
-footer .peace { display: flex; align-items: flex-end; gap: 6px; }
-footer .olive { width: 120px; }
-footer .fdove { width: 74px; margin-bottom: 18px; }
-footer .fdove svg { display: block; animation: bob 3.4s ease-in-out infinite; }
-footer .fdove .wing { transform-box: fill-box; transform-origin: 30% 100%; animation: flap .5s ease-in-out infinite alternate; }
-.vase { position: absolute; top: 4px; right: max(16px, env(safe-area-inset-right, 0px)); width: clamp(84px, 12vw, 130px); z-index: 2; pointer-events: none; }
+footer .fdove { width: 170px; height: 104px; }
+footer .fdove svg { display: block; width: 100%; height: 100%; animation: bob 3.4s ease-in-out infinite; }
+footer .fdove .wing { transform-box: fill-box; transform-origin: 40% 100%; animation: flap .6s ease-in-out infinite alternate; }
+.vase { position: absolute; top: 18px; right: max(16px, env(safe-area-inset-right, 0px)); width: clamp(84px, 11vw, 120px); z-index: 2; pointer-events: none; }
 .vase svg { display: block; overflow: visible; }
 .vase .flow { animation: flow .9s linear infinite; }
 @keyframes flow { to { stroke-dashoffset: -32; } }
@@ -147,9 +140,8 @@ footer .sig { font-family: var(--display); font-size: 28px; color: var(--gold); 
 </head><body>
 <canvas id="stars"></canvas>
 <div class="meander" id="m1"></div>
-<div class="vase" id="vase"></div>
 <div class="wrap">
-  <div class="dove" id="dove"></div>
+  <div class="vase" id="vase"></div>
   <header class="hero">
     <div class="rose" id="rose"><canvas id="sand"></canvas></div>
     <div class="hero-text">
@@ -163,27 +155,40 @@ footer .sig { font-family: var(--display); font-size: 28px; color: var(--gold); 
   </header>
   <section class="book" id="book"></section>
   <footer>
-    <div class="peace"><div class="olive" id="olive"></div><div class="fdove" id="fdove"></div></div>
+    <div class="fdove" id="fdove"></div>
     <div>No expiry, no blackout dates, no "are you sure?" from me. Stack two on the same night if it's a hard week.</div>
     <div class="sig">Love, Jah</div>
   </footer>
 </div>
 <div class="meander" id="m2"></div>
 
-<script src="jess-art.js?v=3c"></script>
-<script src="rose.js?v=3c"></script>
+<script src="jess-art.js?v=3d"></script>
+<script src="rose.js?v=3d"></script>
 <script>
 document.getElementById("rose").insertAdjacentHTML("afterbegin", ROSE.svg("hero"));
-const DOVE = `<svg viewBox="0 0 72 40" aria-hidden="true">
-  <path d="M10 24 L0 19 L2 29Z" fill="#d4e2e4"/>
-  <path d="M8 24 C14 20, 22 19, 30 21 L44 14 C48 12, 52 12, 54 14 L60 13 L55 17 C54 22, 48 27, 40 28 C30 30, 18 30, 8 24Z" fill="#eef8f7"/>
-  <circle cx="51.5" cy="15" r=".9" fill="#10263d"/>
-  <path class="wing" d="M24 22 C22 10, 28 2, 40 0 C36 8, 36 16, 32 21Z" fill="#d4e2e4"/>
-  <path d="M58 15 Q64 18 66 25" stroke="#6b7a35" stroke-width="1.2" fill="none"/>
-  <ellipse cx="62.5" cy="19" rx="3.2" ry="1.3" transform="rotate(40 62.5 19)" fill="#7d8c3f"/>
-  <ellipse cx="66" cy="23.5" rx="3.2" ry="1.3" transform="rotate(75 66 23.5)" fill="#7d8c3f"/>
+// Dove in flight carrying an olive branch.
+const OLIVE_LEAVES = [[126, 37, -18], [131, 45, 38], [124, 49, 118], [136, 53, 62], [128, 59, 125], [139, 63, 78], [133, 69, 112]];
+const DOVE = `<svg viewBox="0 0 160 92" aria-hidden="true">
+  <defs>
+    <linearGradient id="dvBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d7e4e6"/></linearGradient>
+    <linearGradient id="dvWing" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#e9f1f2"/><stop offset="1" stop-color="#c3d4d7"/></linearGradient>
+  </defs>
+  <path d="M60 44 C 54 22, 64 6, 90 2 C 84 16, 82 30, 74 44Z" fill="#b9cbcf"/>
+  <path d="M22 54 L2 44 L8 52 L0 58 L8 60 L4 66 L26 58Z" fill="#dce7e9"/>
+  <path d="M6 51 L22 55 M4 59 L22 57" stroke="#b9cbcf" stroke-width=".8"/>
+  <path d="M20 54 C 32 46, 52 44, 68 46 L 94 36 C 100 32, 108 32, 112 35 L 118 36 L 112 41 C 110 48, 100 56, 86 59 C 66 63, 38 62, 20 54Z" fill="url(#dvBody)"/>
+  <path d="M88 52 C 96 50, 104 46, 108 42" stroke="#c3d4d7" stroke-width="1" fill="none"/>
+  <g class="wing">
+    <path d="M50 48 C 42 24, 56 6, 88 0 C 82 14, 82 32, 74 48Z" fill="url(#dvWing)"/>
+    <path d="M56 44 C 54 32, 60 20, 74 10 M62 46 C 62 34, 68 22, 80 12 M68 47 C 68 36, 74 26, 84 16" stroke="#aac0c4" stroke-width=".9" fill="none"/>
+  </g>
+  <circle cx="106" cy="37" r="1.6" fill="#10263d"/>
+  <path d="M112 35 L121 36.5 L112 39Z" fill="#d9a35c"/>
+  <path d="M118 37 C 128 42, 134 54, 138 72" stroke="#55652a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  ${OLIVE_LEAVES.map(([x, y, r]) => `<g transform="translate(${x} ${y}) rotate(${r})"><path d="M-9 0 Q 0 -3.4, 9 0 Q 0 3.4, -9 0Z" fill="#6f8037"/><path d="M-8 0 Q 0 1.2, 8 0" stroke="#b3c18a" stroke-width=".7" fill="none"/></g>`).join("")}
+  <circle cx="129" cy="51" r="2.8" fill="#2f3a18"/><circle cx="128.2" cy="50.2" r=".8" fill="#7e8d55"/>
+  <circle cx="135" cy="60" r="2.8" fill="#3a4620"/><circle cx="134.2" cy="59.2" r=".8" fill="#7e8d55"/>
 </svg>`;
-document.getElementById("dove").innerHTML = DOVE;
 document.getElementById("fdove").innerHTML = DOVE;
 
 // Her tattoo: a Greek vase on the border, pouring water.
@@ -231,7 +236,6 @@ document.getElementById("vase").innerHTML = `<svg viewBox="-40 0 130 160" aria-h
   }
   size(); addEventListener("resize", size); requestAnimationFrame(frame);
 })();
-document.getElementById("olive").innerHTML = ART.olive;
 ["m1", "m2"].forEach(id => document.getElementById(id).style.background = MEANDER("#d9b26a") + " repeat-x");
 
 // Faint twinkling stars behind everything.
