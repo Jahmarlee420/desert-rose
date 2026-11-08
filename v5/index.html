@@ -39,11 +39,12 @@ body {
 .stem { stroke-dasharray: 260; animation: grow 1.1s cubic-bezier(.4,0,.2,1) both; }
 @keyframes grow { from { stroke-dashoffset: 260; } to { stroke-dashoffset: 0; } }
 .thorn { animation: fade .4s ease .9s both; }
-.leaf { transform-box: fill-box; animation: unfurl .7s cubic-bezier(.3,1.4,.5,1) var(--d) both, flutter 3.2s ease-in-out 2.5s infinite; }
-.leaf.r { transform-origin: 0% 60%; } .leaf.l { transform-origin: 100% 60%; animation-delay: var(--d), 2.9s; }
+/* after unfurling, leaf and stem motion comes from the shared wind (see WIND below), not fixed loops */
+.leaf { transform-box: fill-box; animation: unfurl .7s cubic-bezier(.3,1.4,.5,1) var(--d) backwards; }
+.leaf.r { transform-origin: 0% 60%; } .leaf.l { transform-origin: 100% 60%; }
 @keyframes unfurl { from { transform: scale(0); } to { transform: scale(1); } }
 @keyframes flutter { 0%,100% { transform: rotate(0); } 50% { transform: rotate(-5deg) scaleY(.92); } }
-.plant { transform-box: fill-box; transform-origin: 50% 100%; animation: wind 5.5s ease-in-out 2s infinite; }
+.plant { transform-box: fill-box; transform-origin: 50% 100%; }
 @keyframes wind { 0%,100% { transform: rotate(-1.5deg); } 35% { transform: rotate(3.5deg); } 60% { transform: rotate(1.5deg); } }
 .head .layer { transform-box: fill-box; transform-origin: center; animation: bloom 1.2s cubic-bezier(.25,1.25,.5,1) var(--d) both; }
 @keyframes bloom { from { transform: scale(.05) rotate(-70deg); } to { transform: none; } }
@@ -198,11 +199,11 @@ footer .heart svg { width: 100%; height: 100%; display: block; }
 </div>
 <div class="meander" id="m2"></div>
 
-<script src="jess-art.js?v=5h"></script>
-<script src="rose.js?v=5h"></script>
-<script src="water.js?v=5h"></script>
-<script src="dove.js?v=5h"></script>
-<script src="trek.js?v=5h"></script>
+<script src="jess-art.js?v=5i"></script>
+<script src="rose.js?v=5i"></script>
+<script src="water.js?v=5i"></script>
+<script src="dove.js?v=5i"></script>
+<script src="trek.js?v=5i"></script>
 <script>const MODE = "frame"; document.body.classList.add(MODE);</script>
 <script>
 document.getElementById("rose").insertAdjacentHTML("afterbegin", ROSE.svg("hero"));
@@ -251,11 +252,16 @@ document.getElementById("delta").innerHTML = TREK.delta();
 document.getElementById("heart").innerHTML = ART.heartFlag("sig");
 
 // Her tattoo: Greek vases in both top corners, pouring water.
+// One breeze for the whole scene: gust strength over time (about 0.1 calm to 1.9 strong), blowing left to right.
+// The sand, the rose's lean, the leaves and the water pours all read from it so they move together.
+window.WIND = t => 1 + .6 * Math.sin(t / 1700) + .3 * Math.sin(t / 530);
+
 document.querySelectorAll(".vase").forEach((v, i) => v.innerHTML = WATER.vase("v" + i));
 WATER.init(MODE);
 
-// Light sandy breeze blowing through the rose.
+// Light sandy breeze blowing through the rose; the rose and its leaves lean and flutter with the same gusts.
 (() => {
+  const plant = document.querySelector(".rose .plant"), leafR = document.querySelector(".rose .leaf.r"), leafL = document.querySelector(".rose .leaf.l");
   const c = document.getElementById("sand"), ctx = c.getContext("2d");
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   let W, H, grains = [], last = performance.now();
@@ -268,7 +274,15 @@ WATER.init(MODE);
   function spawn(x) { const low = Math.random() < .75; return { x, y: low ? rnd(H * .6, H * .92) : rnd(H * .1, H * .6), v: rnd(30, 75), r: rnd(.5, 1.5), a: rnd(.25, .7), ph: rnd(0, 6.28) }; }
   function frame(t) {
     const dt = Math.min((t - last) / 1000, .05); last = t;
-    const gust = 1 + .6 * Math.sin(t / 1700) + .3 * Math.sin(t / 530);
+    const gust = WIND(t);
+    // stem leans downwind as the gust builds, with a slight tremble that grows with it
+    const lean = .6 + 2.4 * (gust - 1) + .3 * Math.sin(t / 170) * gust;
+    plant.style.transform = `rotate(${lean.toFixed(2)}deg)`;
+    if (t > 2600) {
+      const flap = (1.5 + 6 * Math.max(0, gust - .3)) * (.6 + .4 * Math.sin(t / 210));
+      leafR.style.transform = `rotate(${(-flap).toFixed(2)}deg) scaleY(${(1 - .05 * gust).toFixed(3)})`;
+      leafL.style.transform = `rotate(${(flap * .8).toFixed(2)}deg) scaleY(${(1 - .05 * gust).toFixed(3)})`;
+    }
     ctx.clearRect(0, 0, W, H);
     for (const g of grains) {
       g.x += g.v * gust * dt; g.y += Math.sin(g.ph + t / 400) * 6 * dt;

@@ -162,7 +162,9 @@ const WATER = (() => {
       for (let i = 0; i <= N; i++) {
         const u = i / N, dy = u * s.fall;
         const x = s.m.x + s.dir * K * Math.sqrt(dy);
-        const wob = (Math.sin(dy * .22 - time * 10) * .8 + Math.sin(dy * .09 + time * 4.3) * .55) * u;
+        // the shared breeze bows the falling water slightly downwind (left to right)
+        const breeze = typeof WIND === "function" ? (WIND(time * 1000) - 1) * 1.8 * u * u : 0;
+        const wob = (Math.sin(dy * .22 - time * 10) * .8 + Math.sin(dy * .09 + time * 4.3) * .55) * u + breeze;
         const neck = Math.exp(-((u - .55) ** 2) / .02) * .8; // a slight pinch partway down, like a real pour
         const w = Math.max(1.6, 6.8 - 4.6 * u - neck);
         pts.push({ x: x + wob, y: s.m.y + dy, w, u });
