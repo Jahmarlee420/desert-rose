@@ -151,6 +151,8 @@ footer .fdove .wing.far { animation-name: wingbeat-far; animation-delay: -.05s; 
 .flyby .ship svg { display: block; width: 100%; height: auto; }
 .flyby .warp, .flyby .deflector { animation: nacglow 1.8s ease-in-out infinite; }
 @keyframes nacglow { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+.flyby .navlight { animation: navblink 1.4s steps(1) infinite; } .flyby .navlight.red { animation-delay: -.7s; }
+@keyframes navblink { 0%, 70% { opacity: .15; } 72%, 100% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .flyby { display: none; } }
 footer .quote { display: flex; gap: 14px; align-items: center; margin: 0 0 10px; max-width: 46ch; }
 footer .quote .delta { width: 34px; flex: none; }
@@ -199,11 +201,11 @@ footer .heart svg { width: 100%; height: 100%; display: block; }
 </div>
 <div class="meander" id="m2"></div>
 
-<script src="jess-art.js?v=5i"></script>
-<script src="rose.js?v=5i"></script>
-<script src="water.js?v=5i"></script>
-<script src="dove.js?v=5i"></script>
-<script src="trek.js?v=5i"></script>
+<script src="jess-art.js?v=5j"></script>
+<script src="rose.js?v=5j"></script>
+<script src="water.js?v=5j"></script>
+<script src="dove.js?v=5j"></script>
+<script src="trek.js?v=5j"></script>
 <script>const MODE = "frame"; document.body.classList.add(MODE);</script>
 <script>
 document.getElementById("rose").insertAdjacentHTML("afterbegin", ROSE.svg("hero"));
@@ -219,7 +221,7 @@ function flyby() {
   const R = s => document.querySelector(s).getBoundingClientRect();
   const vl = R(".vase.l svg > g > path:nth-of-type(5)"), vr = R(".vase.r svg > g > path:nth-of-type(5)"), head = R(".rose .head");
   const wide = vr.left - vl.right > 520;
-  const w = wide ? 96 : 62, h = w * 44 / 104, warp = 2.4, cruise = .85;
+  const w = wide ? 132 : 90, h = w * 40 / 120, warp = wide ? 2.4 : 1.6, cruise = .92;
   ship.style.width = w + "px";
   let x0, xm, x2, y;
   if (wide) {
@@ -237,14 +239,14 @@ function flyby() {
   const at = (x, yy, s, sxw = 1) => `translate(${x.toFixed(1)}px, ${yy.toFixed(1)}px) scale(${s}) scaleX(${sxw})`;
   if (flybyAnim) flybyAnim.cancel();
   flybyAnim = ship.animate([
-    { offset: 0, transform: at(x0, y - 10, .22), opacity: 0 },
-    { offset: .05, transform: at(x0 + (xm - x0) * .12, y - 8, .3), opacity: .9 },
-    { offset: .3, transform: at(xm, y, .78), opacity: 1 },
+    { offset: 0, transform: at(x0, y - 8, .5), opacity: 0 },
+    { offset: .015, transform: at(x0 + (xm - x0) * .03, y - 7, .52), opacity: .95 },
+    { offset: .3, transform: at(xm, y, .88), opacity: 1 },
     { offset: .4, transform: at(x2, y + 2, cruise), opacity: 1 },
     { offset: .41, transform: at(x2 + 6, y + 2, cruise, warp), opacity: .95 },
     { offset: .418, transform: at(x2 + 24, y + 2, cruise, warp), opacity: 0 },
     { offset: 1, transform: at(x2 + 24, y + 2, cruise, warp), opacity: 0 }
-  ], { duration: 32000, delay: 3500, iterations: Infinity, easing: "linear" });
+  ], { duration: 32000, delay: 1500, iterations: Infinity, easing: "linear" });
 }
 setTimeout(flyby, 1200);
 addEventListener("resize", () => { clearTimeout(flyby.t); flyby.t = setTimeout(flyby, 300); });
