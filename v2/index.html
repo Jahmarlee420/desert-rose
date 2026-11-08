@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
-<title>Desert Rose</title>
+<title>Happy Birthday, Jess</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=GFS+Didot&family=Reem+Kufi:wght@500&family=Alegreya+Sans:wght@400;500;700&display=swap">
 <style>
 /* Layout: full-bleed animated desert scene, bilingual title lockup below it, ticket book on the night sky. */
@@ -48,7 +48,7 @@ body { background: linear-gradient(var(--night-2), var(--night) 40%); background
 .wrap { max-width: 1000px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .lockup { position: relative; z-index: 2; margin-top: -70px; display: grid; justify-items: center; text-align: center; gap: 4px; }
 .greet { font-family: var(--greek); color: var(--gold); font-size: 22px; letter-spacing: .04em; animation: rise .9s ease 2.1s both; }
-h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(54px, 13vw, 112px); line-height: .95; letter-spacing: .02em; color: var(--foam); text-shadow: 0 4px 24px rgba(0,0,0,.5); }
+h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(72px, 20vw, 140px); line-height: .95; letter-spacing: .02em; color: var(--foam); text-shadow: 0 4px 24px rgba(0,0,0,.5); }
 h1 span { display: inline-block; animation-name: letter, wave; animation-duration: .8s, 7s; animation-timing-function: cubic-bezier(.2,.8,.3,1), ease-in-out; animation-iteration-count: 1, infinite; animation-fill-mode: both, none; }
 @keyframes letter { from { transform: translateY(.4em); filter: blur(8px); opacity: 0; } to { transform: none; filter: none; opacity: 1; } }
 @keyframes wave { 0%, 80%, 100% { color: var(--foam); text-shadow: 0 4px 24px rgba(0,0,0,.5); } 88% { color: var(--gold); text-shadow: 0 0 22px rgba(233,194,122,.8); } }
@@ -59,6 +59,7 @@ h1 span { display: inline-block; animation-name: letter, wave; animation-duratio
 .arabic { font-family: var(--arabic); color: var(--rose-soft); font-size: clamp(26px, 6vw, 38px); line-height: 1.3; animation: rise .9s ease 3.3s both; text-shadow: 0 0 18px rgba(229,100,141,.45); }
 @keyframes rise { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
 .lede { max-width: 52ch; margin: 14px auto 0; color: #cfdce8; text-align: center; animation: rise .9s ease 3.6s both; }
+.joke { margin: 0 auto; max-width: 46ch; font-style: italic; color: var(--gold); font-size: 15px; animation: rise .9s ease 3.8s both; }
 
 /* tickets */
 .book { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 430px), 1fr)); gap: 22px; margin: 40px 0 0; }
@@ -124,11 +125,12 @@ footer .sig svg { width: 30px; height: 15px; border-radius: 2px; }
 <section class="hero" id="hero"><canvas id="sky-canvas"></canvas></section>
 <div class="wrap">
   <header class="lockup">
-    <div class="greet">Χρόνια πολλά, Jess</div>
-    <h1 id="title" aria-label="Desert Rose">Desert Rose</h1>
+    <div class="greet">Χρόνια πολλά</div>
+    <h1 id="title" aria-label="Jess">Jess</h1>
     <div class="orn"><i></i><b></b><i></i></div>
     <div class="arabic" lang="ar">وردة الصحراء</div>
     <p class="lede">Seven vouchers for your birthday, good for one week of being spoiled. Tap <strong>Use it</strong>, tap again to confirm, and your messages open with a text to me. Hit send and it's booked.</p>
+    <p class="joke">The paper ones count too. This page is for when you lose them. When, not if.</p>
   </header>
   <section class="book" id="book"></section>
   <footer>
