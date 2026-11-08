@@ -14,14 +14,30 @@
 }
 * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 html, body { margin: 0; background: #fff; color: var(--ink); font-family: var(--body); }
-.page { display: grid; grid-auto-rows: 2in; gap: 0.08in; justify-content: center; break-after: page; }
+.page { filter: drop-shadow(0 0 .7px #6f8597); display: grid; grid-auto-rows: 2in; gap: 0.08in; justify-content: center; break-after: page; }
 .page:last-child { break-after: auto; }
 .card { position: relative; width: 5.6in; height: 2in; border-radius: 9px; overflow: hidden; outline: 1px solid #9fb3c4; }
 
 /* tickets: same build as the digital ones */
-.ticket { --kind: var(--rose); --ic: var(--ink); --band: var(--foam); display: grid; grid-template-columns: 1fr 1.12in; background: var(--foam); overflow: visible; }
+/* same cut-out shape as the digital tickets: scooped corners, notches and perforation at the tear line; the page's drop-shadow draws the cut line */
+.ticket { --kind: var(--rose); --ic: var(--ink); --band: var(--foam); display: grid; grid-template-columns: 1fr 1.12in; background: var(--foam); overflow: visible;
+  outline: none; border-radius: 0; --cut: 12px; --tear: 1.12in;
+  -webkit-mask: radial-gradient(circle var(--cut) at 0 0, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle var(--cut) at 100% 0, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle var(--cut) at 0 100%, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle var(--cut) at 100% 100%, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle 10px at calc(100% - var(--tear)) 0, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle 10px at calc(100% - var(--tear)) 100%, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle 2.2px at calc(100% - var(--tear)) 50%, #0000 90%, #000) 0 3px / 100% 10px repeat-y; -webkit-mask-composite: source-in;
+  mask: radial-gradient(circle var(--cut) at 0 0, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle var(--cut) at 100% 0, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle var(--cut) at 0 100%, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle var(--cut) at 100% 100%, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle 10px at calc(100% - var(--tear)) 0, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle 10px at calc(100% - var(--tear)) 100%, #0000 97%, #000) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle 2.2px at calc(100% - var(--tear)) 50%, #0000 90%, #000) 0 3px / 100% 10px repeat-y; mask-composite: intersect; }
 .ticket.study { --kind: var(--aegean); --ic: var(--foam); --band: var(--aegean); }
-.notch { position: absolute; right: calc(1.12in - 9px); width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 1px solid #9fb3c4; z-index: 2; }
+.notch { display: none; position: absolute; right: calc(1.12in - 9px); width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 1px solid #9fb3c4; z-index: 2; }
 .notch.t { top: -10px; } .notch.b { bottom: -10px; }
 .main { padding: 0 0.22in 0.14in; display: flex; flex-direction: column; gap: 4px; min-width: 0; border-radius: 9px 0 0 9px; overflow: hidden; }
 .mband { height: 13px; margin: 0 -0.22in 4px; }
@@ -29,7 +45,7 @@ html, body { margin: 0; background: #fff; color: var(--ink); font-family: var(--
 h2 { font-family: var(--display); font-weight: 400; font-size: 20pt; line-height: 1.05; margin: 0; color: var(--aegean); }
 p { margin: 0; font-size: 11.5pt; line-height: 1.28; color: #2e4559; }
 .fine { font-size: 9pt; color: var(--muted); font-style: italic; margin-top: auto; }
-.stub { background: var(--kind); border-left: 2px dashed var(--foam); border-radius: 0 9px 9px 0; overflow: hidden; display: grid; grid-template-rows: auto auto 1fr auto; justify-items: center; text-align: center; }
+.stub { background: var(--kind); overflow: hidden; display: grid; grid-template-rows: auto auto 1fr auto; justify-items: center; text-align: center; }
 .stitch { width: 100%; height: 17px; background-color: var(--foam); }
 .no { font-family: var(--greek); font-size: 18pt; color: var(--foam); line-height: 1.2; }
 .icon { width: 0.42in; color: var(--ic); align-self: center; }
