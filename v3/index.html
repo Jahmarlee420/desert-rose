@@ -26,7 +26,7 @@ body {
 #stars { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
 .meander { height: 22px; opacity: .45; position: relative; z-index: 1; }
 .wrap {
-  position: relative; z-index: 1; overflow: visible; max-width: 1000px; margin: 0 auto; padding-block: 36px 56px;
+  position: relative; z-index: 1; overflow: visible; max-width: 1000px; margin: 0 auto; padding-block: 112px 56px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
   display: grid; gap: 40px;
 }
@@ -130,9 +130,13 @@ footer { display: grid; gap: 8px; justify-items: start; color: #b9c9d8; font-siz
 footer .fdove { width: 170px; height: 104px; }
 footer .fdove svg { display: block; width: 100%; height: 100%; animation: bob 3.4s ease-in-out infinite; }
 footer .fdove .wing { transform-box: fill-box; transform-origin: 40% 100%; animation: flap .6s ease-in-out infinite alternate; }
-.vase { position: absolute; top: 18px; right: max(16px, env(safe-area-inset-right, 0px)); width: clamp(84px, 11vw, 120px); z-index: 2; pointer-events: none; }
+/* two vases in the top corners pour down the page edges into a river that feeds the rose's sand bed */
+.vase { position: absolute; top: 24px; width: 76px; z-index: 3; pointer-events: none; }
+.vase.l { left: -24px; }
+.vase.r { right: -24px; transform: scaleX(-1); }
 .vase svg { display: block; overflow: visible; }
-.vase .flow { animation: flow .9s linear infinite; }
+#river { position: absolute; left: 0; top: 0; z-index: 1; pointer-events: none; overflow: visible; }
+#river .flow { animation: flow 1.1s linear infinite; }
 @keyframes flow { to { stroke-dashoffset: -32; } }
 footer .sig { font-family: var(--display); font-size: 28px; color: var(--gold); display: flex; align-items: center; gap: 12px; }
 footer .heart { width: 30px; height: 28px; display: block; animation: beat 1.6s ease-in-out infinite; }
@@ -144,8 +148,9 @@ footer .heart svg { width: 100%; height: 100%; display: block; }
 </head><body>
 <canvas id="stars"></canvas>
 <div class="meander" id="m1"></div>
+<div class="vase l"></div><div class="vase r"></div>
+<svg id="river" aria-hidden="true"></svg>
 <div class="wrap">
-  <div class="vase" id="vase"></div>
   <header class="hero">
     <div class="rose" id="rose"><canvas id="sand"></canvas></div>
     <div class="hero-text">
@@ -166,8 +171,8 @@ footer .heart svg { width: 100%; height: 100%; display: block; }
 </div>
 <div class="meander" id="m2"></div>
 
-<script src="jess-art.js?v=3g"></script>
-<script src="rose.js?v=3g"></script>
+<script src="jess-art.js?v=3h"></script>
+<script src="rose.js?v=3h"></script>
 <script>
 document.getElementById("rose").insertAdjacentHTML("afterbegin", ROSE.svg("hero"));
 // Dove in flight carrying an olive branch.
@@ -196,14 +201,12 @@ const DOVE = `<svg viewBox="0 0 160 92" aria-hidden="true">
 document.getElementById("fdove").innerHTML = DOVE;
 document.getElementById("heart").innerHTML = ART.heartFlag("sig");
 
-// Her tattoo: a Greek vase on the border, pouring water.
-document.getElementById("vase").innerHTML = `<svg viewBox="-40 0 130 160" aria-hidden="true">
+// Her tattoo: Greek vases in both top corners, pouring water.
+const VASE = `<svg viewBox="-40 0 130 160" aria-hidden="true">
   <defs>
-    <linearGradient id="pour" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fe3df" stop-opacity=".95"/><stop offset=".7" stop-color="#3fb7b0" stop-opacity=".55"/><stop offset="1" stop-color="#3fb7b0" stop-opacity="0"/></linearGradient>
     <linearGradient id="clay" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8f3f1e"/><stop offset=".45" stop-color="#cf7347"/><stop offset="1" stop-color="#8f3f1e"/></linearGradient>
   </defs>
-  <path d="M15 24 C 7 25, -1 38, -3 68 C -4 100, -4 130, -4 160" stroke="url(#pour)" stroke-width="5" fill="none" stroke-linecap="round" opacity=".55"/>
-  <path class="flow" d="M15 24 C 7 25, -1 38, -3 68 C -4 100, -4 130, -4 160" stroke="url(#pour)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-dasharray="7 9"/>
+  <circle class="mouth" cx="15" cy="24" r="1" fill="none"/>
   <g transform="translate(46 50) rotate(-50) translate(-30 -45)">
     <path d="M22 4h16v7c0 4 14 9 14 29 0 20-12 33-14 41H22c-2-8-14-21-14-41 0-20 14-25 14-29z" fill="url(#clay)"/>
     <path d="M20 3h20" stroke="#5a2410" stroke-width="3" stroke-linecap="round"/>
@@ -213,6 +216,36 @@ document.getElementById("vase").innerHTML = `<svg viewBox="-40 0 130 160" aria-h
     <path d="M14 58 C 20 70, 40 70, 46 58 L 44 66 C 38 76, 22 76, 16 66Z" fill="#1b130b"/>
   </g>
 </svg>`;
+document.querySelectorAll(".vase").forEach(v => v.innerHTML = VASE);
+
+// The two pours run down the page edges and join as a river into the rose's sand bed.
+// Routed from live layout so it never crosses the text.
+function drawRiver() {
+  const svg = document.getElementById("river");
+  const W = document.documentElement.clientWidth, sx = scrollX, sy = scrollY;
+  const centre = el => { const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2 + sx, y: r.top + r.height / 2 + sy }; };
+  const pL = centre(document.querySelector(".vase.l .mouth")), pR = centre(document.querySelector(".vase.r .mouth"));
+  const m = document.querySelector(".rose .mound").getBoundingClientRect();
+  const bedX = m.left + m.width / 2 + sx, bedY = m.bottom + sy - 6, mRight = m.right + sx;
+  const t = document.querySelector(".hero-text").getBoundingClientRect();
+  const blocked = t.left + sx > mRight - 2 && t.top + sy < bedY + 10;
+  const yR = blocked ? Math.max(bedY, t.bottom + sy + 18) : bedY;
+  const r = 18;
+  const left = `M${pL.x} ${pL.y} L${pL.x} ${bedY - r} Q${pL.x} ${bedY} ${pL.x + r} ${bedY} L${bedX} ${bedY}`;
+  const right = blocked
+    ? `M${pR.x} ${pR.y} L${pR.x} ${yR - r} Q${pR.x} ${yR} ${pR.x - r} ${yR} L${mRight + 50} ${yR} C${mRight + 15} ${yR} ${mRight + 15} ${bedY} ${mRight - 10} ${bedY} L${bedX} ${bedY}`
+    : `M${pR.x} ${pR.y} L${pR.x} ${bedY - r} Q${pR.x} ${bedY} ${pR.x - r} ${bedY} L${bedX} ${bedY}`;
+  const H = Math.max(bedY, yR) + 24;
+  svg.setAttribute("width", W); svg.setAttribute("height", H); svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.innerHTML = [left, right].map(d => `
+    <path d="${d}" stroke="#3fb7b0" stroke-opacity=".5" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path class="flow" d="${d}" stroke="#bff0ec" stroke-opacity=".85" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-dasharray="7 9"/>`).join("")
+    + `<ellipse cx="${bedX}" cy="${bedY + 2}" rx="${m.width / 2 + 10}" ry="5" fill="#3fb7b0" opacity=".35"/>`;
+}
+drawRiver();
+addEventListener("resize", drawRiver);
+document.fonts && document.fonts.ready.then(drawRiver);
+setTimeout(drawRiver, 3000);
 
 // Light sandy breeze blowing through the rose.
 (() => {

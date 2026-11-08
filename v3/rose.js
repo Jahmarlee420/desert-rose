@@ -60,7 +60,7 @@ const ROSE = (() => {
           <g class="layer" style="--d:1.4s">${bud}</g>
         </g></g></g>
       </g>
-      <path d="M-110 248 C -70 222, -30 214, 0 214 C 32 214, 72 224, 112 248Z" fill="url(#${id}sand)"/>
+      <path class="mound" d="M-110 248 C -70 222, -30 214, 0 214 C 32 214, 72 224, 112 248Z" fill="url(#${id}sand)"/>
       <path d="M-70 236 C -40 226, -16 222, 4 222 M -20 240 C 10 232, 40 232, 70 240" stroke="#f3d6a6" stroke-width="1.2" fill="none" opacity=".55"/>
     </svg>`;
   }
