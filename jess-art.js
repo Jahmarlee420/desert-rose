@@ -42,4 +42,4 @@ const VOUCHERS = [
   { id: "s3", kind: "study", title: "Chore-free study day", body: "Dishes, laundry, errands: all mine for the day so you can just focus.", fine: "Ends with a back rub." },
   { id: "d4", kind: "dinner", title: "Date-night dinner", body: "Dressed up, reservation booked, I plan the whole night start to finish.", fine: "Ride there and back sorted." }
 ];
-const KIND = { dinner: { label: "Symposion · Dinner", icon: ART.amphora }, study: { label: "Athena's favour · Study", icon: ART.owl } };
+const KIND = { dinner: { label: "Dinner · Symposion, a Greek feast", icon: ART.amphora }, study: { label: "Study · Athena, goddess of wisdom", icon: ART.owl } };

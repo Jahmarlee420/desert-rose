@@ -48,6 +48,8 @@ body {
 .greek { font-family: var(--greek); color: var(--bronze); font-size: 20px; letter-spacing: .04em; }
 h1 { font-family: var(--display); font-weight: 400; font-size: clamp(46px, 10vw, 88px); line-height: .95; margin: 0; letter-spacing: .01em; text-wrap: balance; }
 .arabic { font-family: var(--arabic); color: var(--rose); font-size: 26px; direction: rtl; text-align: left; }
+.gloss { display: block; font-family: var(--body); font-size: 14px; font-style: italic; color: #aebccb; letter-spacing: 0; margin-top: -2px; }
+.stub .no small { display: block; font-family: var(--body); font-size: 11px; opacity: .85; }
 .lede { max-width: 56ch; margin: 4px 0 0; color: #e6dccb; }
 @media (max-width: 600px) {
   .hero { grid-template-columns: 1fr; justify-items: center; text-align: center; }
@@ -106,9 +108,10 @@ footer .sig svg { width: 30px; height: 15px; border-radius: 2px; }
   <header class="hero">
     <div class="rose" id="rose"></div>
     <div class="hero-text">
-      <div class="greek">Χρόνια πολλά, Jess</div>
+      <div class="greek">Χρόνια πολλά, Jess <span class="gloss">Greek for “happy birthday” (literally “many years”)</span></div>
       <h1>Desert Rose</h1>
       <div class="arabic" lang="ar">وردة الصحراء</div>
+      <span class="gloss">Arabic for “desert rose”</span>
       <p class="lede">Seven vouchers for your birthday, good for one week of being spoiled. Cash them in whenever you want. Tap <strong>Use it</strong>, tap again to confirm, and your messages open with a text to me. Hit send and it's booked.</p>
     </div>
   </header>
@@ -154,7 +157,7 @@ function render() {
         <h2></h2><p class="body"></p><div class="fine"></div>
       </div>
       <div class="stub">
-        <div><div class="stitch"></div><div class="no">${GREEK_NUM[i]} / ζ΄</div></div>
+        <div><div class="stitch"></div><div class="no">${GREEK_NUM[i]} / ζ΄<small>No. ${i + 1} of 7</small></div></div>
         <div class="icon">${KIND[v.kind].icon}</div>
         <div class="act"></div>
       </div>`;
