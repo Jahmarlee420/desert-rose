@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Jess's Birthday Vouchers</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=GFS+Didot&family=Reem+Kufi:wght@500&family=Alegreya+Sans:wght@400;500;700&display=swap">
+<style>
+/* Layout: Aegean night sky over sun-baked papyrus tickets; desert rose hero, ticket book below. Single look on purpose. */
+:root {
+  color-scheme: dark;
+  --sea: #0f2236;
+  --sea-2: #1a3a57;
+  --papyrus: #f3e4c8;
+  --ink: #23180f;
+  --muted: #7b6550;
+  --terracotta: #b4532a;
+  --olive: #5e6b2e;
+  --bronze: #d2a64f;
+  --rose: #e5648d;
+  --stitch: #a51f2b;
+  --display: "Marcellus", "Georgia", serif;
+  --greek: "GFS Didot", "Georgia", serif;
+  --arabic: "Reem Kufi", "Segoe UI", sans-serif;
+  --body: "Alegreya Sans", system-ui, sans-serif;
+}
+body {
+  background:
+    radial-gradient(900px 500px at 80% -5%, rgba(210,166,79,.18), transparent 60%),
+    radial-gradient(1200px 700px at 10% 0%, var(--sea-2), var(--sea));
+  background-color: var(--sea);
+  color: var(--papyrus);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+.meander { height: 24px; opacity: .55; }
+.wrap {
+  max-width: 1000px; margin: 0 auto;
+  padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 36px;
+}
+.hero { display: grid; grid-template-columns: minmax(0, 220px) 1fr; gap: 28px; align-items: center; }
+.hero .rose svg { width: 100%; height: auto; filter: drop-shadow(0 12px 30px rgba(229,100,141,.35)); }
+.hero-text { display: grid; gap: 8px; min-width: 0; }
+.greek { font-family: var(--greek); color: var(--bronze); font-size: 20px; letter-spacing: .04em; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(46px, 10vw, 88px); line-height: .95; margin: 0; letter-spacing: .01em; text-wrap: balance; }
+.arabic { font-family: var(--arabic); color: var(--rose); font-size: 26px; direction: rtl; text-align: left; }
+.lede { max-width: 56ch; margin: 4px 0 0; color: #e6dccb; }
+@media (max-width: 600px) {
+  .hero { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .hero .rose { width: 170px; }
+  .arabic { text-align: center; }
+}
+
+.book { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 430px), 1fr)); gap: 22px; }
+.ticket {
+  --kind: var(--terracotta); --band: var(--papyrus);
+  position: relative; display: grid; grid-template-columns: 1fr 96px;
+  background: var(--papyrus); color: var(--ink);
+  border-radius: 6px; min-width: 0;
+  box-shadow: 0 12px 30px rgba(0,0,0,.4);
+}
+.ticket.study { --kind: var(--olive); }
+.ticket::before, .ticket::after { content: ""; position: absolute; right: 86px; width: 20px; height: 20px; border-radius: 50%; background: var(--sea); }
+.ticket::before { top: -10px; } .ticket::after { bottom: -10px; }
+.main { padding: 18px 20px 16px; display: grid; gap: 7px; min-width: 0; }
+.kind { font-family: var(--display); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--kind); }
+.ticket h2 { font-family: var(--display); font-weight: 400; font-size: 26px; line-height: 1.1; margin: 0; text-wrap: balance; }
+.ticket p { margin: 0; color: #4b3a2a; font-size: 16px; }
+.fine { font-size: 13px; color: var(--muted); font-style: italic; }
+.stub {
+  border-left: 2px dashed rgba(243,228,200,.8); background: var(--kind); color: #1b130b;
+  border-radius: 0 6px 6px 0; display: grid; grid-template-rows: auto 1fr auto; justify-items: center; text-align: center; overflow: hidden;
+}
+.stitch { width: 100%; height: 16px; background-color: var(--papyrus); }
+.stub .no { font-family: var(--greek); font-size: 15px; color: var(--papyrus); margin-top: 8px; }
+.stub .icon { width: 38px; align-self: center; }
+.ticket.study .stub .icon { color: #23290f; }
+.act { padding: 0 8px 12px; width: 100%; }
+.use { font: 700 14px var(--body); border: 2px solid var(--papyrus); background: transparent; color: var(--papyrus); border-radius: 999px; padding: 6px 10px; cursor: pointer; width: 100%; }
+.use:hover { background: var(--papyrus); color: var(--kind); }
+.use:focus-visible, .undo:focus-visible { outline: 3px solid var(--bronze); outline-offset: 2px; }
+.use.armed { background: var(--bronze); border-color: var(--bronze); color: var(--ink); }
+.stamp {
+  position: absolute; left: 42%; top: 50%; transform: translate(-50%, -50%) rotate(-11deg);
+  border: 3px solid var(--stitch); color: var(--stitch); font-family: var(--display);
+  letter-spacing: .14em; text-transform: uppercase; text-align: center; font-size: 19px;
+  padding: 6px 16px; border-radius: 4px; background: rgba(243,228,200,.88); pointer-events: none;
+}
+.stamp small { display: block; font-family: var(--body); font-size: 12px; letter-spacing: .06em; }
+.ticket.used .main > * { opacity: .4; }
+.undo { background: none; border: 0; color: var(--papyrus); font: 13px var(--body); text-decoration: underline; cursor: pointer; }
+
+footer { display: grid; gap: 8px; justify-items: start; color: #d9cdb8; font-size: 15px; max-width: 60ch; }
+footer .olive { width: 130px; }
+footer .sig { font-family: var(--display); font-size: 30px; color: var(--bronze); display: flex; align-items: center; gap: 12px; }
+footer .sig svg { width: 30px; height: 15px; border-radius: 2px; }
+</style>
+</head><body>
+
+<div class="meander" id="m1"></div>
+<div class="wrap">
+  <header class="hero">
+    <div class="rose" id="rose"></div>
+    <div class="hero-text">
+      <div class="greek">Χρόνια πολλά, Jess</div>
+      <h1>Desert Rose</h1>
+      <div class="arabic" lang="ar">وردة الصحراء</div>
+      <p class="lede">Seven vouchers for your birthday, good for one week of being spoiled. Cash them in whenever you want. Tap <strong>Use it</strong>, tap again to confirm, and your messages open with a text to me. Hit send and it's booked.</p>
+    </div>
+  </header>
+
+  <section class="book" id="book"></section>
+
+  <footer>
+    <div class="olive" id="olive"></div>
+    <div>Fine print: no expiry, no blackout dates, no "are you sure?" from me. Stack two on the same night if it's a hard week.</div>
+    <div class="sig">Love, Jah <span id="flag"></span></div>
+  </footer>
+</div>
+<div class="meander" id="m2"></div>
+
+<script src="jess-art.js"></script>
+<script>
+document.getElementById("rose").innerHTML = ART.rose("hero");
+document.getElementById("olive").innerHTML = ART.olive;
+document.getElementById("flag").innerHTML = ART.flag;
+["m1", "m2"].forEach(id => document.getElementById(id).style.background = MEANDER("#d2a64f") + " repeat-x");
+
+const KEY = "jess-vouchers-used";
+function loadUsed() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } }
+function saveUsed(u) { try { localStorage.setItem(KEY, JSON.stringify(u)); } catch {} }
+let used = loadUsed();
+
+// Jah's number for the redeem text. Leave empty and her phone asks who to send it to.
+const JAH_PHONE = "+19054479733";
+function textJah(v, i) {
+  const msg = `🌹 Desert Rose voucher ${GREEK_NUM[i]} redeemed: "${v.title}". Pay up, Jah! 💕`;
+  location.href = `sms:${JAH_PHONE}?&body=${encodeURIComponent(msg)}`;
+}
+
+function render() {
+  const book = document.getElementById("book");
+  book.textContent = "";
+  VOUCHERS.forEach((v, i) => {
+    const t = document.createElement("article");
+    t.className = "ticket " + v.kind + (used[v.id] ? " used" : "");
+    t.innerHTML = `
+      <div class="main">
+        <div class="kind">${KIND[v.kind].label}</div>
+        <h2></h2><p class="body"></p><div class="fine"></div>
+      </div>
+      <div class="stub">
+        <div><div class="stitch"></div><div class="no">${GREEK_NUM[i]} / ζ΄</div></div>
+        <div class="icon">${KIND[v.kind].icon}</div>
+        <div class="act"></div>
+      </div>`;
+    t.querySelector(".stitch").style.backgroundImage = TATREEZ("#a51f2b", "#23180f");
+    t.querySelector("h2").textContent = v.title;
+    t.querySelector(".body").textContent = v.body;
+    t.querySelector(".fine").textContent = v.fine;
+    const act = t.querySelector(".act");
+    if (used[v.id]) {
+      const s = document.createElement("div");
+      s.className = "stamp";
+      s.innerHTML = "Redeemed<small></small>";
+      s.querySelector("small").textContent = used[v.id];
+      t.appendChild(s);
+      const u = document.createElement("button");
+      u.className = "undo"; u.id = "undo-" + v.id; u.textContent = "Undo";
+      u.onclick = () => { delete used[v.id]; saveUsed(used); render(); };
+      const again = document.createElement("button");
+      again.className = "undo"; again.id = "text-" + v.id; again.textContent = "Text Jah";
+      again.onclick = () => textJah(v, i);
+      act.append(again, document.createElement("br"), u);
+    } else {
+      const b = document.createElement("button");
+      b.className = "use"; b.id = "use-" + v.id; b.textContent = "Use it";
+      b.onclick = () => {
+        if (!b.classList.contains("armed")) {
+          b.classList.add("armed"); b.textContent = "Sure?";
+          setTimeout(() => { if (b.isConnected) { b.classList.remove("armed"); b.textContent = "Use it"; } }, 4000);
+          return;
+        }
+        used[v.id] = new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" });
+        saveUsed(used); render();
+        textJah(v, i);
+      };
+      act.appendChild(b);
+    }
+    book.appendChild(t);
+  });
+}
+render();
+</script>
+</body></html>
