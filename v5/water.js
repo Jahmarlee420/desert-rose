@@ -114,15 +114,21 @@ const WATER = (() => {
         const thin = i === 2, k = thin ? .55 : 1;
         el("path", { d, stroke: "#1f6f6b", "stroke-opacity": .35, "stroke-width": 8 * k, fill: "none", "stroke-linecap": "round", "stroke-linejoin": "round" }, svg);
         el("path", { d, stroke: "#3fb7b0", "stroke-opacity": .45, "stroke-width": 5 * k, fill: "none", "stroke-linecap": "round", "stroke-linejoin": "round" }, svg);
-        el("path", { d, stroke: "#c9f4f1", "stroke-opacity": .35, "stroke-width": 1.4 * k, fill: "none", "stroke-linecap": "round", transform: `translate(${-1.2 * k} 0)` }, svg);
-        const fast = el("path", { d, stroke: "#f2fffe", "stroke-opacity": .75, "stroke-width": 1 * k, fill: "none", "stroke-linecap": "round", "stroke-dasharray": "1.5 17" }, svg);
-        const slow = el("path", { d, stroke: "#bff0ec", "stroke-opacity": .55, "stroke-width": 2.2 * k, fill: "none", "stroke-linecap": "round", "stroke-dasharray": "6 31", filter: "url(#wglow)" }, svg);
-        g.channels.push({ fast, slow, len: fast.getTotalLength(), path: fast });
+        el("path", { d, stroke: "#c9f4f1", "stroke-opacity": .3, "stroke-width": 1.4 * k, fill: "none", "stroke-linecap": "round", transform: `translate(${-1.2 * k} 0)` }, svg);
+        // braided current: several highlight strands with irregular gaps, each moving at its own speed
+        const strands = [
+          { dash: "9 5 3 14 6 21", w: 1.6, o: .38, sp: 26, off: -1.4, blur: true },
+          { dash: "4 11 2 7 12 19", w: 1, o: .6, sp: 41, off: .2 },
+          { dash: "2 9 5 16 1 12", w: .7, o: .8, sp: 58, off: 1.3 },
+          { dash: "14 30 6 24", w: 2.6, o: .18, sp: 17, off: 0, blur: true }
+        ].map(st => ({ ...st, el: el("path", { d, stroke: "#e9fffd", "stroke-opacity": st.o, "stroke-width": st.w * k, fill: "none", "stroke-linecap": "round", "stroke-dasharray": st.dash, transform: `translate(${st.off * k} 0)`, ...(st.blur ? { filter: "url(#wglow)" } : {}) }, svg) }));
+        g.channels.push({ strands, len: strands[0].el.getTotalLength(), path: strands[1].el });
       });
       for (let i = 0; i < 8; i++) g.glints.push({ ch: g.channels[i % 3], s: Math.random(), v: 40 + Math.random() * 30, el: el("circle", { r: 1.8, fill: "#ffffff", opacity: .8, filter: "url(#wglow)" }, svg) });
       streams.forEach(s => {
-        s.ripples = [0, .33, .66].map(p => ({ p, el: el("ellipse", { cx: s.join.x, cy: s.join.y, fill: "none", stroke: "#d4f7f4", "stroke-width": .9 }, svg) }));
-        s.mist = el("ellipse", { cx: s.join.x, cy: s.join.y - 2, rx: 9, ry: 5, fill: "#d4f7f4", opacity: .25, filter: "url(#wmist)" }, svg);
+        // aerated water where the pour merges into the border: a soft glow plus drifting foam bubbles, no rings
+        s.mist = el("ellipse", { cx: s.join.x, cy: s.join.y + 4, rx: 6, ry: 10, fill: "#d4f7f4", opacity: .25, filter: "url(#wmist)" }, svg);
+        s.foam = Array.from({ length: 9 }, (_, i) => ({ ph: Math.random() * 6.28, sp: 1.5 + Math.random() * 2.5, dy: Math.random() * 22, el: el("circle", { r: .7 + Math.random() * 1.6, fill: "#f2fffe" }, svg) }));
         s.sheath = el("path", { fill: "#7fd6d0", "fill-opacity": .22 }, svg);
         s.body = el("path", { fill: `url(#${s.grad})` }, svg);
         s.edge = el("path", { fill: "none", stroke: "#ffffff", "stroke-opacity": .35, "stroke-width": .6 }, svg);
@@ -161,14 +167,20 @@ const WATER = (() => {
         s.core.setAttribute("stroke-dashoffset", (-time * 80).toFixed(1));
         s.core2.setAttribute("d", line(p, q => s.dir * q.w * .22));
         s.core2.setAttribute("stroke-dashoffset", (-time * 55).toFixed(1));
-        s.ripples.forEach(rp => { const k = ((reduce ? .3 : time * .9) + rp.p) % 1; rp.el.setAttribute("rx", 2 + k * 12); rp.el.setAttribute("ry", 1 + k * 3.4); rp.el.setAttribute("opacity", ((1 - k) * .55).toFixed(2)); });
-        s.mist.setAttribute("opacity", (.18 + .1 * Math.sin(time * 3)).toFixed(2));
+        s.mist.setAttribute("opacity", (.2 + .08 * Math.sin(time * 2.4)).toFixed(2));
+        s.foam.forEach(f => {
+          // bubbles get carried down the border, drifting side to side, then recycle at the join
+          f.dy = (f.dy + dt * (18 + f.sp * 6)) % 26;
+          const fx = s.join.x + Math.sin(f.ph + time * f.sp) * 2.2, fy = s.join.y - 2 + f.dy;
+          f.el.setAttribute("cx", fx.toFixed(1)); f.el.setAttribute("cy", fy.toFixed(1));
+          f.el.setAttribute("opacity", ((1 - f.dy / 26) * .65).toFixed(2));
+        });
         if (!reduce) {
-          if (Math.random() < dt * 14) { const q = p[p.length - 1]; drops.push({ x: q.x, y: q.y - 2, vx: (Math.random() - .5) * 50 - s.dir * 30, vy: -35 - Math.random() * 50, life: 1, r: .6 + Math.random() * 1.3 }); }
+          if (Math.random() < dt * 5) { const q = p[p.length - 1]; drops.push({ x: q.x, y: q.y - 2, vx: (Math.random() - .5) * 26 - s.dir * 12, vy: -18 - Math.random() * 26, life: .8, r: .5 + Math.random() * .9 }); }
           if (Math.random() < dt * 3) { const q = p[Math.round((.3 + Math.random() * .5) * (p.length - 1))]; drops.push({ x: q.x + s.dir * q.w / 2, y: q.y, vx: s.dir * (8 + Math.random() * 14), vy: 10, life: .8, r: .6 + Math.random() * .7 }); }
         }
       });
-      G.channels.forEach(c => { c.fast.setAttribute("stroke-dashoffset", (-time * 48).toFixed(1)); c.slow.setAttribute("stroke-dashoffset", (-time * 22).toFixed(1)); });
+      G.channels.forEach(c => c.strands.forEach(st => st.el.setAttribute("stroke-dashoffset", (-time * st.sp).toFixed(1))));
       G.glints.forEach(gl => { gl.s = (gl.s + dt * gl.v / gl.ch.len) % 1; const pt = gl.ch.path.getPointAtLength(gl.s * gl.ch.len); gl.el.setAttribute("cx", pt.x); gl.el.setAttribute("cy", pt.y); gl.el.setAttribute("opacity", (.3 + .5 * Math.sin(time * 3 + gl.s * 20) ** 2).toFixed(2)); });
       G.dropLayer.textContent = "";
       drops = drops.filter(d => (d.life -= dt * 1.7) > 0);
