@@ -35,12 +35,12 @@ const TATREEZ = (c, c2) => {
 };
 const GREEK_NUM = ["α΄", "β΄", "γ΄", "δ΄", "ε΄", "ϛ΄", "ζ΄"];
 const VOUCHERS = [
-  { id: "d1", kind: "dinner", title: "Dinner in, chef's choice", body: "I plan a surprise menu, cook every course and set the table like a restaurant. You just show up hungry.", fine: "Includes dessert. Non-negotiable." },
-  { id: "s1", kind: "study", title: "Quiet-house study night", body: "Phone on silent, house on lockdown, coffee and snacks delivered to your desk on a schedule.", fine: "Interruptions only for refills." },
-  { id: "d2", kind: "dinner", title: "Home-cooked, you name it", body: "Pick the dish, I shop, cook, plate it and do every last dish after.", fine: "Kitchen cleanup included." },
-  { id: "s2", kind: "study", title: "Flashcard quiz master", body: "I drill you on whatever you're studying for as long as you want, with zero complaining.", fine: "Correct answers earn snacks." },
-  { id: "d3", kind: "dinner", title: "Takeout, any spot", body: "Your favourite takeout. I order it, pick it up and set it all out.", fine: "Movie of your choice comes with it." },
-  { id: "s3", kind: "study", title: "Chore-free study day", body: "Dishes, laundry, errands: all mine for the day so you can just focus.", fine: "Ends with a back rub." },
-  { id: "d4", kind: "dinner", title: "Date-night dinner", body: "Dressed up, reservation booked, I plan the whole night start to finish.", fine: "Ride there and back sorted." }
+  { id: "d1", kind: "dinner", title: "Dinner in, chef's choice", body: "I plan a surprise menu, cook every course and set the table like a fancy restaurant. All you have to do is show up hungry.", fine: "Dessert included. Non-negotiable." },
+  { id: "s1", kind: "study", title: "Quiet-house study night", body: "We turn the phones on silent and the house goes on lockdown. Coffee and snacks show up at your desk right on schedule.", fine: "Interruptions only for refills." },
+  { id: "d2", kind: "dinner", title: "Home-cooked, you name it", body: "You name it, I make it. I do the shopping, the cooking, the plating and every last dish after. You just eat.", fine: "Kitchen cleanup included." },
+  { id: "s2", kind: "study", title: "Flashcard quiz master", body: "I'm your personal quiz master. I drill you on whatever you're studying, for as long as you want, and you won't hear one complaint.", fine: "Right answers earn snacks." },
+  { id: "d3", kind: "dinner", title: "Takeout, any spot", body: "Pick your favourite spot. I order it, go grab it and set it all out so you never have to leave the couch.", fine: "Movie of your choice comes with it." },
+  { id: "s3", kind: "study", title: "Chore-free study day", body: "I do the dishes, the laundry and the errands. The whole day is yours to focus, and I keep the house running.", fine: "Ends with a back rub." },
+  { id: "d4", kind: "dinner", title: "Date-night dinner", body: "You get dressed up, I handle the rest. Reservation booked and the whole night planned, start to finish.", fine: "Ride there and back sorted." }
 ];
 const KIND = { dinner: { label: "Symposion · Dinner", icon: ART.amphora }, study: { label: "Athena's favour · Study", icon: ART.owl } };
