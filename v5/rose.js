@@ -1,38 +1,75 @@
-// v5: a garden rose seen from the side, rising from a small sand mound.
-// A tight spiral bud, cupped petals wrapping it, and outer petals that flare with rolled, lit edges.
-// Each petal records its hinge (bx, by) and how far it folds in when closed (a degrees, s scale),
-// so the page can bloom it open from a bud; drawn open by default (print, reduced motion).
+// v5: a garden rose rising from a small sand mound.
+// The head is generated: ~two dozen petals placed on a golden-angle spiral, each shaped in 3D
+// (cupped across, rim rolling outward), viewed from slightly above, shaded by which way it faces,
+// and drawn back to front. head(P) gives the rose at bloom P (0 tight bud, 1 full bloom);
+// like a real rose it opens from the outside in.
 const ROSE = (() => {
-  const mirror = d => d.replace(/(-?\d+(\.\d+)?) (-?\d+(\.\d+)?)/g, (m, x, _a, y) => `${-parseFloat(x)} ${y}`);
-  const L1 = "M-4 26 C -34 22, -62 4, -60 -22 C -52 -31, -38 -31, -27 -37 C -19 -41, -10 -39, -6 -31 C -8 -6, -6 12, -4 26Z";
-  const L1lip = "M-60 -22 C -52 -31, -38 -31, -27 -37 C -19 -41, -10 -39, -6 -31";
-  const M1 = "M-2 28 C -30 24, -45 0, -41 -26 C -31 -19, -18 -17, -8 -23 C -4 0, -2 14, -2 28Z";
-  const M1lip = "M-41 -26 C -31 -19, -18 -17, -8 -23";
-  const F1 = "M-26 18 C -48 16, -64 0, -62 -16 C -52 -8, -40 -3, -30 5Z";
-  const F1lip = "M-62 -16 C -52 -8, -40 -3, -30 5";
-  // [path, lip, hinge x, hinge y, closed angle, closed scale, bloom order 0..1, gradient, ruffles in wind]
-  const PETALS = [
-    ["M-16 12 C -27 -16, -22 -48, 0 -52 C 22 -48, 27 -16, 16 12Z", "M-21 -36 C -15 -50, 15 -50, 21 -36", 0, 12, 0, .55, .3, "p", 0],
-    [L1, L1lip, -4, 26, 38, .8, .55, "p", 1],
-    [mirror(L1), mirror(L1lip), 4, 26, -38, .8, .55, "p", 1],
-    [M1, M1lip, -2, 28, 24, .85, .35, "p", 0],
-    [mirror(M1), mirror(M1lip), 2, 28, -24, .85, .35, "p", 0],
-    ["M-17 0 C -21 -28, -8 -48, 3 -48 C 15 -46, 21 -30, 17 -2 C 9 2, -9 2, -17 0Z", "", 0, 0, 0, .8, 0, "b", 0],
-    ["M-21 0 C -23 -22, -15 -35, -2 -37 C -10 -25, -8 -11, 3 1 C -6 3, -14 3, -21 0Z", "M-23 -22 C -19 -31, -11 -36, -2 -37", -6, 2, 12, .9, .12, "b", 0],
-    ["M21 0 C 23 -20, 16 -30, 8 -32 C 12 -20, 10 -8, 2 2 C 8 3, 15 3, 21 0Z", "M23 -20 C 20 -27, 14 -31, 8 -32", 6, 2, -12, .9, .15, "b", 0],
-    [F1, F1lip, -26, 18, 50, .7, .7, "f", 1],
-    [mirror(F1), mirror(F1lip), 26, 18, -50, .7, .7, "f", 1],
-    ["M-28 18 C -31 2, -20 -8, 0 -5 C 20 -8, 31 2, 28 18 C 17 31, -17 31, -28 18Z", "M-28 18 C -31 2, -20 -8, 0 -5 C 20 -8, 31 2, 28 18", 0, 28, 0, .35, .6, "f", 0]
-  ];
+  const N = 26, GOLD = 2.39996, TILT = 13 * Math.PI / 180, CA = Math.cos(TILT), SA = Math.sin(TILT), K = 1.38;
+  const clamp = v => Math.max(0, Math.min(1, v)), ease = v => v * v * (3 - 2 * v);
+  const sstep = (a, b, v) => ease(clamp((v - a) / (b - a)));
+  const proj = ([x, y, z]) => [x, 30 - (y * CA - z * SA), y * SA + z * CA];   // base of the head sits at y 30
+  const mix = (a, b, k) => "#" + [0, 2, 4].map(i => Math.round(parseInt(a.substr(i + 1, 2), 16) * (1 - k) + parseInt(b.substr(i + 1, 2), 16) * k).toString(16).padStart(2, "0")).join("");
+  // smooth closed curve through points (Catmull-Rom as cubic Bezier)
+  const smooth = pts => {
+    const n = pts.length, p = i => pts[(i + n) % n];
+    let d = `M${p(0)[0].toFixed(1)} ${p(0)[1].toFixed(1)}`;
+    for (let i = 0; i < n; i++) {
+      const [a, b, c, e] = [p(i - 1), p(i), p(i + 1), p(i + 2)];
+      d += `C${(b[0] + (c[0] - a[0]) / 6).toFixed(1)} ${(b[1] + (c[1] - a[1]) / 6).toFixed(1)} ${(c[0] - (e[0] - b[0]) / 6).toFixed(1)} ${(c[1] - (e[1] - b[1]) / 6).toFixed(1)} ${c[0].toFixed(1)} ${c[1].toFixed(1)}`;
+    }
+    return d + "Z";
+  };
+  function head(P, id, wind = 0, time = 0) {
+    const petals = [], defs = [];
+    for (let i = 0; i < N; i++) {
+      const t = i / (N - 1);                                   // 0 innermost .. 1 outermost
+      const th = i * GOLD + .4;
+      const q = ease(clamp((P - (1 - t) * .5) / .5));         // outer petals open first
+      // closed: petals lean in and wrap the bud; open: a tall upright centre with outer petals flaring
+      const phiBud = -3 + 10 * t, phiOpen = 3 + 54 * Math.pow(t, 1.5);
+      const phi = phiBud + (phiOpen - phiBud) * q + wind * t * (1.6 + Math.sin(time * 3 + i));
+      const roll = Math.pow(t, .8) * q;                        // rims curl outward as they open, most on the outer petals
+      const w = K * (8 + 20 * t), h = K * (37 + 12 * t), cup = (1 - .5 * t) * (1.15 - .25 * q), r0 = K * (1 + 5 * t * (.25 + .75 * q));
+      const R = [Math.cos(th), 0, Math.sin(th)], T = [-Math.sin(th), 0, Math.cos(th)];
+      const S = 12, line = [[r0 * R[0], 0, r0 * R[2]]];
+      for (let s = 1; s <= S; s++) {
+        // open rims roll outward; closed petals curl inward near the tip, so the bud tapers to a point
+        const v = s / S, a = (phi + roll * 75 * sstep(.5, 1, v) - (1 - q) * 30 * sstep(.3, 1, v)) * Math.PI / 180, c = line[s - 1], k = h / S;
+        line.push([c[0] + k * Math.sin(a) * R[0], c[1] + k * Math.cos(a), c[2] + k * Math.sin(a) * R[2]]);
+      }
+      const at = (u, v) => {
+        const f = v * S, j = Math.min(S - 1, Math.floor(f)), r = f - j, c = line[j].map((x, d) => x + (line[j + 1][d] - x) * r);
+        const s = (.22 + .78 * Math.sin(Math.min(1, v * 1.15) * Math.PI / 2)) * (1 - .12 * v) * (1 - (1 - q) * .5 * sstep(.45, 1, v));
+        const cupIn = cup * w * s * u * u * .6;
+        return [c[0] + u * w * s * T[0] - cupIn * R[0], c[1] + cupIn * .15, c[2] + u * w * s * T[2] - cupIn * R[2]];
+      };
+      const top = u => 1 - .1 * u * u - .05 * Math.exp(-u * u / .03);
+      const pts3 = [];
+      for (let k = 0; k <= 7; k++) pts3.push(at(-1, top(-1) * k / 7));
+      for (let k = 1; k < 10; k++) { const u = -1 + 2 * k / 10; pts3.push(at(u, top(u))); }
+      for (let k = 7; k >= 0; k--) pts3.push(at(1, top(1) * k / 7));
+      const pts = pts3.map(proj);
+      // facing: normal of the petal surface near its middle, after the camera tilt
+      const A = at(-.3, .6), B = at(.3, .6), C = at(0, .45), D = at(0, .75);
+      const du = [B[0] - A[0], B[1] - A[1], B[2] - A[2]], dv = [D[0] - C[0], D[1] - C[1], D[2] - C[2]];
+      const nrm = [du[1] * dv[2] - du[2] * dv[1], du[2] * dv[0] - du[0] * dv[2], du[0] * dv[1] - du[1] * dv[0]];
+      const nz = nrm[1] * SA + nrm[2] * CA, nl = Math.hypot(...nrm) || 1, facing = nz / nl;
+      const inner = facing > 0;                                // we see the petal's inside (deeper red)
+      const lit = .55 + .45 * Math.abs(facing);
+      const base = proj(line[0]), tip = proj(line[S]);
+      const g = `${id}g${i}`;
+      const c0 = inner ? "#45040f" : "#6e0f27", c1 = inner ? mix("#9c0f2b", "#d8213f", lit) : mix("#b8233f", "#ef5574", lit), c2 = inner ? "#f0486a" : "#ff8fa8";
+      defs.push(`<linearGradient id="${g}" gradientUnits="userSpaceOnUse" x1="${base[0].toFixed(1)}" y1="${base[1].toFixed(1)}" x2="${tip[0].toFixed(1)}" y2="${tip[1].toFixed(1)}"><stop offset="0" stop-color="${c0}"/><stop offset=".55" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient>`);
+      const rim = pts.slice(8, 17).map(p => `${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(" L");
+      const depth = (line[S / 2][1] * SA + line[S / 2][2] * CA);
+      petals.push({ depth, svg: `<path d="${smooth(pts)}" fill="url(#${g})" stroke="#4a0818" stroke-width=".3" stroke-opacity=".35"/>` +
+        (roll > .35 ? `<path d="M${rim}" fill="none" stroke="#ffc4d2" stroke-width="${(.4 + .5 * roll).toFixed(2)}" stroke-opacity="${(.08 + .14 * roll).toFixed(2)}" stroke-linecap="round"/>` : "") });
+    }
+    petals.sort((a, b) => a.depth - b.depth);
+    return `<defs>${defs.join("")}</defs><ellipse cx="0" cy="34" rx="7" ry="5" fill="#4f6a2c"/>` + petals.map(p => p.svg).join("");
+  }
   // id keeps gradient ids unique when the rose appears twice on a page.
-  function svg(id = "r") {
-    const head = `<ellipse cx="0" cy="33" rx="8" ry="6" fill="#4f6a2c"/>` + PETALS.map(([d, lip, bx, by, a, s, o, g, ruffle], i) => `
-      <g class="pt${ruffle ? " ruffle" : ""}" data-bx="${bx}" data-by="${by}" data-a="${a}" data-s="${s}" data-o="${o}" filter="url(#${id}sh)">
-        <path d="${d}" fill="url(#${id}${g})"/>
-        <path d="${d}" fill="url(#${id}sheen)" opacity=".5"/>
-        ${lip ? `<path d="${lip}" stroke="#ffa9bd" stroke-width="${g === "f" ? 1.8 : 1.3}" fill="none" stroke-linecap="round" opacity=".75"/>` : ""}
-        ${i === 5 ? `<path d="M-10 -34 C -3 -45, 11 -41, 9 -30 C 7 -20, -7 -23, -5 -32 M-13 -14 C -9 -28, 7 -30, 11 -16 M-14 -4 C -10 -10, 8 -12, 13 -4" stroke="#3e0510" stroke-width="1.3" fill="none" opacity=".75"/><path d="M-6 -44 C 0 -47, 8 -45, 11 -38" stroke="#e2405f" stroke-width="1" fill="none" opacity=".8"/>` : ""}
-      </g>`).join("");
+  function svg(id = "r", P = 1) {
     return `<svg viewBox="-125 -95 250 345" aria-hidden="true">
       <defs>
         <linearGradient id="${id}p" x1="0" y1="30" x2="0" y2="-60" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5a0718"/><stop offset=".45" stop-color="#a3132f"/><stop offset=".85" stop-color="#e2405f"/><stop offset="1" stop-color="#ff7f99"/></linearGradient>
@@ -57,7 +94,7 @@ const ROSE = (() => {
           <path d="M0 33 C -2 39, -4 45, -7 51" stroke="#3f5a2a" stroke-width="2.6" fill="none" stroke-linecap="round"/>
         </g>
         <!-- the head is drawn compact, then stretched upward from its base into a tall, high-centred rose -->
-        <g><g class="spin"><g class="head"><g transform="translate(0 30) scale(.94 1.34) translate(0 -30)">${head}</g></g></g></g>
+        <g><g class="spin"><g class="head" filter="url(#${id}sh)">${head(P, id)}</g></g></g>
       </g>
       <path class="mound" d="M-110 248 C -70 222, -30 214, 0 214 C 32 214, 72 224, 112 248Z" fill="url(#${id}sand)"/>
       <clipPath id="${id}mclip"><path d="M-110 248 C -70 222, -30 214, 0 214 C 32 214, 72 224, 112 248Z"/></clipPath>
@@ -71,5 +108,5 @@ const ROSE = (() => {
       <path d="M-70 236 C -40 226, -16 222, 4 222 M -20 240 C 10 232, 40 232, 70 240" stroke="#f3d6a6" stroke-width="1.2" fill="none" opacity=".55"/>
     </svg>`;
   }
-  return { svg };
+  return { svg, head };
 })();
