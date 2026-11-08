@@ -210,11 +210,11 @@ footer .heart svg { width: 100%; height: 100%; display: block; }
 </div>
 <div class="meander" id="m2"></div>
 
-<script src="jess-art.js?v=5n"></script>
-<script src="rose.js?v=5n"></script>
-<script src="water.js?v=5n"></script>
-<script src="dove.js?v=5n"></script>
-<script src="trek.js?v=5n"></script>
+<script src="jess-art.js?v=5o"></script>
+<script src="rose.js?v=5o"></script>
+<script src="water.js?v=5o"></script>
+<script src="dove.js?v=5o"></script>
+<script src="trek.js?v=5o"></script>
 <script>const MODE = "frame"; document.body.classList.add(MODE);</script>
 <script>
 document.getElementById("rose").insertAdjacentHTML("afterbegin", ROSE.svg("hero"));
@@ -256,12 +256,12 @@ function flyby() {
     { offset: .418, transform: at(x2 + 24, y + 2, cruise, warp), opacity: 0 },
     { offset: 1, transform: at(x2 + 24, y + 2, cruise, warp), opacity: 0 }
   ], { duration: 32000, delay: 1500, iterations: Infinity, easing: "linear" });
-  warpFx({ x2, y, w, h, cruise, warp, wide });
+  warpFx({ x2, y, w, h, cruise, warp, wide, vaseBottom: Math.max(vl.bottom, vr.bottom) + sy });
 }
 
 // Warp-out effects, timed to the ship's jump (offset .40 of the same 32s loop).
 let warpAnims = [];
-function warpFx({ x2, y, w, h, cruise, warp, wide }) {
+function warpFx({ x2, y, w, h, cruise, warp, wide, vaseBottom }) {
   warpAnims.forEach(a => a.cancel()); warpAnims = [];
   const host = document.querySelector(".flyby");
   host.querySelectorAll(".fx").forEach(n => n.remove());
@@ -298,7 +298,8 @@ function warpFx({ x2, y, w, h, cruise, warp, wide }) {
   ]);
 
   // space distortion: a lens ring that bends the stars behind it, then a trailing ripple
-  const pr = wide ? 54 : 36, cx = frontX + len * .55;
+  // the lens ring never grows into the vases above it (it reaches 108% of its radius at the end)
+  const pr = wide ? 54 : Math.max(16, Math.min(36, (midY - vaseBottom - 8) / 1.08)), cx = frontX + len * .55;
   const po = mk("portal");
   Object.assign(po.style, { width: pr * 2 + "px", height: pr * 2 + "px", left: (cx - pr) + "px", top: (midY - pr) + "px" });
   run(po, [
