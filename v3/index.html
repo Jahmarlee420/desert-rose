@@ -134,7 +134,10 @@ footer .fdove .wing { transform-box: fill-box; transform-origin: 40% 100%; anima
 .vase svg { display: block; overflow: visible; }
 .vase .flow { animation: flow .9s linear infinite; }
 @keyframes flow { to { stroke-dashoffset: -32; } }
-footer .sig { font-family: var(--display); font-size: 28px; color: var(--gold); }
+footer .sig { font-family: var(--display); font-size: 28px; color: var(--gold); display: flex; align-items: center; gap: 12px; }
+footer .heart { width: 30px; height: 28px; display: block; animation: beat 1.6s ease-in-out infinite; }
+footer .heart svg { width: 100%; height: 100%; display: block; }
+@keyframes beat { 0%, 60%, 100% { transform: scale(1); } 15% { transform: scale(1.14); } 30% { transform: scale(1); } 45% { transform: scale(1.08); } }
 
 @media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } }
 </style>
@@ -158,13 +161,13 @@ footer .sig { font-family: var(--display); font-size: 28px; color: var(--gold); 
   <footer>
     <div class="fdove" id="fdove"></div>
     <div>No expiry, no blackout dates, no "are you sure?" from me. Stack two on the same night if it's a hard week.</div>
-    <div class="sig">Love, Jah</div>
+    <div class="sig">Love, Jah <span class="heart" id="heart"></span></div>
   </footer>
 </div>
 <div class="meander" id="m2"></div>
 
-<script src="jess-art.js?v=3e"></script>
-<script src="rose.js?v=3e"></script>
+<script src="jess-art.js?v=3f"></script>
+<script src="rose.js?v=3f"></script>
 <script>
 document.getElementById("rose").insertAdjacentHTML("afterbegin", ROSE.svg("hero"));
 // Dove in flight carrying an olive branch.
@@ -191,6 +194,7 @@ const DOVE = `<svg viewBox="0 0 160 92" aria-hidden="true">
   <circle cx="135" cy="60" r="2.8" fill="#3a4620"/><circle cx="134.2" cy="59.2" r=".8" fill="#7e8d55"/>
 </svg>`;
 document.getElementById("fdove").innerHTML = DOVE;
+document.getElementById("heart").innerHTML = ART.heartFlag("sig");
 
 // Her tattoo: a Greek vase on the border, pouring water.
 document.getElementById("vase").innerHTML = `<svg viewBox="-40 0 130 160" aria-hidden="true">
