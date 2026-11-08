@@ -39,7 +39,7 @@ const VOUCHERS = [
   { id: "s1", kind: "study", title: "Quiet-house study night", body: "We turn the phones on silent and the house goes on lockdown. Coffee and snacks show up at your desk right on schedule.", fine: "Interruptions only for refills." },
   { id: "d2", kind: "dinner", title: "Home-cooked, you name it", body: "You name it, I make it. I do the shopping, the cooking, the plating and every last dish after. You just eat.", fine: "Kitchen cleanup included." },
   { id: "s2", kind: "study", title: "Flashcard quiz master", body: "I'm your personal quiz master. I drill you on whatever you're studying, for as long as you want, and you won't hear one complaint.", fine: "Right answers earn snacks." },
-  { id: "d3", kind: "dinner", title: "Takeout, any spot", body: "Pick your favourite spot. I order it, go grab it and set it all out so you never have to leave the couch.", fine: "Movie of your choice comes with it." },
+  { id: "d3", kind: "dinner", title: "Takeout, any spot", body: "Pick your favourite spot. I order it, go grab it and set it all out so you never have to leave the couch.", fine: "Comes with a Survivor binge." },
   { id: "s3", kind: "study", title: "Chore-free study day", body: "I do the dishes, the laundry and the errands. The whole day is yours to focus, and I keep the house running.", fine: "Ends with a back rub." },
   { id: "d4", kind: "dinner", title: "Date-night dinner", body: "You get dressed up, I handle the rest. Reservation booked and the whole night planned, start to finish.", fine: "Ride there and back sorted." }
 ];
