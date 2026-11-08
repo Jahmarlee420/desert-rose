@@ -48,7 +48,7 @@ body {
 @keyframes wind { 0%,100% { transform: rotate(-1.5deg); } 35% { transform: rotate(3.5deg); } 60% { transform: rotate(1.5deg); } }
 .head .layer { transform-box: fill-box; transform-origin: center; animation: bloom 1.2s cubic-bezier(.25,1.25,.5,1) var(--d) both; }
 @keyframes bloom { from { transform: scale(.05) rotate(-70deg); } to { transform: none; } }
-.spin { transform-box: fill-box; transform-origin: center; animation: spin 45s linear 2.6s infinite; }
+/* the side-view rose blooms open instead of spinning (see the bloom code in the breeze loop) */
 @keyframes spin { to { transform: rotate(360deg); } }
 .glow { transform-box: fill-box; transform-origin: center; animation: pulse 5s ease-in-out 1.5s infinite; }
 
@@ -151,6 +151,15 @@ footer .fdove .wing.far { animation-name: wingbeat-far; animation-delay: -.05s; 
 .flyby .ship svg { display: block; width: 100%; height: auto; }
 .flyby .warp, .flyby .deflector { animation: nacglow 1.8s ease-in-out infinite; }
 @keyframes nacglow { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+/* warp-out: light trails, a flash, and a lens ring that bends the stars behind it */
+.flyby .fx { position: absolute; left: 0; top: 0; opacity: 0; pointer-events: none; }
+.flyby .trails { overflow: visible; }
+.flyby .flash { border-radius: 50%; background: radial-gradient(circle, #ffffff 0%, #cfefff 22%, rgba(110, 200, 255, .55) 45%, rgba(110, 200, 255, 0) 70%); mix-blend-mode: screen; }
+.flyby .portal { border-radius: 50%;
+  -webkit-backdrop-filter: blur(2.5px) saturate(1.8) hue-rotate(35deg) contrast(1.2); backdrop-filter: blur(2.5px) saturate(1.8) hue-rotate(35deg) contrast(1.2);
+  box-shadow: inset 0 0 14px rgba(150, 220, 255, .55), 0 0 10px rgba(150, 220, 255, .45), inset 3px 0 6px rgba(255, 120, 200, .35), inset -3px 0 6px rgba(120, 255, 230, .35);
+  -webkit-mask: radial-gradient(circle, transparent 38%, #000 52%, #000 66%, transparent 74%); mask: radial-gradient(circle, transparent 38%, #000 52%, #000 66%, transparent 74%); }
+.flyby .ripple { border-radius: 50%; border: 1.5px solid rgba(190, 235, 255, .7); box-shadow: 0 0 8px rgba(150, 220, 255, .5); }
 .flyby .navlight { animation: navblink 1.4s steps(1) infinite; } .flyby .navlight.red { animation-delay: -.7s; }
 @keyframes navblink { 0%, 70% { opacity: .15; } 72%, 100% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .flyby { display: none; } }
@@ -201,11 +210,11 @@ footer .heart svg { width: 100%; height: 100%; display: block; }
 </div>
 <div class="meander" id="m2"></div>
 
-<script src="jess-art.js?v=5j"></script>
-<script src="rose.js?v=5j"></script>
-<script src="water.js?v=5j"></script>
-<script src="dove.js?v=5j"></script>
-<script src="trek.js?v=5j"></script>
+<script src="jess-art.js?v=5o"></script>
+<script src="rose.js?v=5o"></script>
+<script src="water.js?v=5o"></script>
+<script src="dove.js?v=5o"></script>
+<script src="trek.js?v=5o"></script>
 <script>const MODE = "frame"; document.body.classList.add(MODE);</script>
 <script>
 document.getElementById("rose").insertAdjacentHTML("afterbegin", ROSE.svg("hero"));
@@ -221,20 +230,20 @@ function flyby() {
   const R = s => document.querySelector(s).getBoundingClientRect();
   const vl = R(".vase.l svg > g > path:nth-of-type(5)"), vr = R(".vase.r svg > g > path:nth-of-type(5)"), head = R(".rose .head");
   const wide = vr.left - vl.right > 520;
-  const w = wide ? 132 : 90, h = w * 40 / 120, warp = wide ? 2.4 : 1.6, cruise = .92;
+  const w = wide ? 132 : 80, h = w * 40 / 120, warp = wide ? 2.4 : 1.4, cruise = .92;
   ship.style.width = w + "px";
   let x0, xm, x2, y;
   if (wide) {
     y = 60 + sy;
     x0 = vl.right + sx + 60;
-    x2 = vr.left + sx - 30 - w * cruise * warp - 24;
+    x2 = vr.left + sx - 30 - w * cruise * warp - 24 - 70;   // leaves room for the warp flash and lens ring
     xm = x0 + (x2 - x0) * .7;
   } else {
     y = head.top + sy + head.height * .3 - h / 2;
     const limit = document.documentElement.clientWidth - 30;
     x0 = 24;
     xm = head.left + sx + head.width / 2 - w * .4;
-    x2 = Math.min(xm + head.width * .55, limit - w * cruise * warp - 24);
+    x2 = Math.min(xm + head.width * .55, limit - w * cruise * warp - 24 - 40);
   }
   const at = (x, yy, s, sxw = 1) => `translate(${x.toFixed(1)}px, ${yy.toFixed(1)}px) scale(${s}) scaleX(${sxw})`;
   if (flybyAnim) flybyAnim.cancel();
@@ -247,6 +256,64 @@ function flyby() {
     { offset: .418, transform: at(x2 + 24, y + 2, cruise, warp), opacity: 0 },
     { offset: 1, transform: at(x2 + 24, y + 2, cruise, warp), opacity: 0 }
   ], { duration: 32000, delay: 1500, iterations: Infinity, easing: "linear" });
+  warpFx({ x2, y, w, h, cruise, warp, wide, vaseBottom: Math.max(vl.bottom, vr.bottom) + sy });
+}
+
+// Warp-out effects, timed to the ship's jump (offset .40 of the same 32s loop).
+let warpAnims = [];
+function warpFx({ x2, y, w, h, cruise, warp, wide, vaseBottom }) {
+  warpAnims.forEach(a => a.cancel()); warpAnims = [];
+  const host = document.querySelector(".flyby");
+  host.querySelectorAll(".fx").forEach(n => n.remove());
+  const mk = (cls, tag = "div") => { const n = tag === "svg" ? document.createElementNS("http://www.w3.org/2000/svg", "svg") : document.createElement(tag); n.setAttribute("class", "fx " + cls); host.appendChild(n); return n; };
+  const sw = w * cruise, sh = h * cruise;                    // ship size at cruise
+  const frontX = x2 + sw, midY = y + h / 2;                  // where it jumps from
+  const len = sw * (warp - 1) + 24 + 6;                      // trails reach the end of the stretched ship
+  const timing = { duration: 32000, delay: 1500, iterations: Infinity, easing: "linear" };
+  const run = (node, frames) => warpAnims.push(node.animate(frames, timing));
+
+  // light trails from nacelles, saucer rim and hull: bright at the ship, fading forward
+  const tr = mk("trails", "svg");
+  const tw = sw + len, th = sh + 8;
+  tr.setAttribute("width", tw); tr.setAttribute("height", th); tr.setAttribute("viewBox", `0 0 ${tw} ${th}`);
+  tr.style.left = x2 + "px"; tr.style.top = (midY - th / 2) + "px"; tr.style.transformOrigin = `${sw}px 50%`;
+  const lanes = [[.30, 1.6, "#ffffff"], [.42, 1.1, "#bfe9ff"], [.55, 2, "#7fd0ff"], [.62, 1.2, "#e3f6ff"], [.78, 1.4, "#9adfff"], [.88, .8, "#ffd2e6"]];
+  tr.innerHTML = `<defs><linearGradient id="trailg" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".35" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#9fe3ff" stop-opacity="0"/></linearGradient>
+    <filter id="trailglow" x="-10%" y="-200%" width="120%" height="500%"><feGaussianBlur stdDeviation="1.2"/></filter></defs>` +
+    lanes.map(([fy, sw2, c]) => `<line x1="${sw * .2}" y1="${(4 + fy * sh).toFixed(1)}" x2="${tw}" y2="${(4 + fy * sh).toFixed(1)}" stroke="${c}" stroke-width="${sw2 * 2.4}" stroke-opacity=".35" filter="url(#trailglow)"/>
+      <line x1="${sw * .2}" y1="${(4 + fy * sh).toFixed(1)}" x2="${tw}" y2="${(4 + fy * sh).toFixed(1)}" stroke="url(#trailg)" stroke-width="${sw2}" stroke-linecap="round"/>`).join("");
+  run(tr, [
+    { offset: 0, opacity: 0, transform: "scaleX(.1)" }, { offset: .398, opacity: 0, transform: "scaleX(.1)" },
+    { offset: .408, opacity: 1, transform: "scaleX(1)" }, { offset: .418, opacity: .9, transform: "scaleX(1.02)" },
+    { offset: .432, opacity: 0, transform: "scaleX(1.05) scaleY(.3)" }, { offset: 1, opacity: 0, transform: "scaleX(.1)" }
+  ]);
+
+  // flash at the jump point
+  const fr = wide ? 34 : 24, fl = mk("flash");
+  Object.assign(fl.style, { width: fr * 2 + "px", height: fr * 2 + "px", left: (frontX + len - fr) + "px", top: (midY - fr) + "px" });
+  run(fl, [
+    { offset: 0, opacity: 0, transform: "scale(.1)" }, { offset: .412, opacity: 0, transform: "scale(.1)" },
+    { offset: .417, opacity: 1, transform: "scale(1)" }, { offset: .426, opacity: 0, transform: "scale(1.6) scaleY(.5)" },
+    { offset: 1, opacity: 0, transform: "scale(.1)" }
+  ]);
+
+  // space distortion: a lens ring that bends the stars behind it, then a trailing ripple
+  // the lens ring never grows into the vases above it (it reaches 108% of its radius at the end)
+  const pr = wide ? 54 : Math.max(16, Math.min(36, (midY - vaseBottom - 8) / 1.08)), cx = frontX + len * .55;
+  const po = mk("portal");
+  Object.assign(po.style, { width: pr * 2 + "px", height: pr * 2 + "px", left: (cx - pr) + "px", top: (midY - pr) + "px" });
+  run(po, [
+    { offset: 0, opacity: 0, transform: "scale(.05) scaleX(.7)" }, { offset: .404, opacity: 0, transform: "scale(.05) scaleX(.7)" },
+    { offset: .414, opacity: 1, transform: "scale(.7) scaleX(.85)" }, { offset: .43, opacity: .6, transform: "scale(1)" },
+    { offset: .45, opacity: 0, transform: "scale(1.08)" }, { offset: 1, opacity: 0, transform: "scale(.05)" }
+  ]);
+  const ri = mk("ripple");
+  Object.assign(ri.style, { width: pr * 2 + "px", height: pr * 2 + "px", left: (cx - pr) + "px", top: (midY - pr) + "px" });
+  run(ri, [
+    { offset: 0, opacity: 0, transform: "scale(.1) scaleX(.6)" }, { offset: .418, opacity: 0, transform: "scale(.1) scaleX(.6)" },
+    { offset: .424, opacity: .8, transform: "scale(.45) scaleX(.75)" }, { offset: .446, opacity: 0, transform: "scale(1) scaleX(.9)" },
+    { offset: 1, opacity: 0, transform: "scale(.1)" }
+  ]);
 }
 setTimeout(flyby, 1200);
 addEventListener("resize", () => { clearTimeout(flyby.t); flyby.t = setTimeout(flyby, 300); });
@@ -263,7 +330,13 @@ WATER.init(MODE);
 
 // Light sandy breeze blowing through the rose; the rose and its leaves lean and flutter with the same gusts.
 (() => {
-  const plant = document.querySelector(".rose .plant"), leafR = document.querySelector(".rose .leaf.r"), leafL = document.querySelector(".rose .leaf.l");
+  const $ = s => document.querySelector(".rose " + s);
+  const leafR = $(".leaf.r"), leafL = $(".leaf.l"), stem = $(".stem"), thorn = $(".thorn"), sepals = $(".sepals"), bloom = $(".head").parentNode.parentNode;
+  // The stem is a cantilever rooted in the sand: sideways bend grows toward the top (dx = D * h^1.6).
+  const STEM = [[0, 232], [18, 192], [-22, 142], [6, 92], [18, 64], [4, 46], [0, 32]];
+  const bend = (D, y) => D * Math.pow(Math.max(0, 232 - y) / 200, 1.6);
+  let D = 0, vD = 0, A = 0, vA = 0;   // stem bend and bloom nod, each a damped spring
+  const petals = [...document.querySelectorAll(".rose .pt")].map(el => ({ el, bx: +el.dataset.bx, by: +el.dataset.by, a: +el.dataset.a, s: +el.dataset.s, o: +el.dataset.o, ruffle: el.classList.contains("ruffle") }));
   const c = document.getElementById("sand"), ctx = c.getContext("2d");
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   let W, H, grains = [], last = performance.now();
@@ -274,16 +347,40 @@ WATER.init(MODE);
     grains = Array.from({ length: 70 }, () => spawn(rnd(0, W)));
   }
   function spawn(x) { const low = Math.random() < .75; return { x, y: low ? rnd(H * .6, H * .92) : rnd(H * .1, H * .6), v: rnd(30, 75), r: rnd(.5, 1.5), a: rnd(.25, .7), ph: rnd(0, 6.28) }; }
+  let t0 = null;
   function frame(t) {
-    const dt = Math.min((t - last) / 1000, .05); last = t;
-    const gust = WIND(t);
-    // stem leans downwind as the gust builds, with a slight tremble that grows with it
-    const lean = .6 + 2.4 * (gust - 1) + .3 * Math.sin(t / 170) * gust;
-    plant.style.transform = `rotate(${lean.toFixed(2)}deg)`;
-    if (t > 2600) {
-      const flap = (1.5 + 6 * Math.max(0, gust - .3)) * (.6 + .4 * Math.sin(t / 210));
-      leafR.style.transform = `rotate(${(-flap).toFixed(2)}deg) scaleY(${(1 - .05 * gust).toFixed(3)})`;
-      leafL.style.transform = `rotate(${(flap * .8).toFixed(2)}deg) scaleY(${(1 - .05 * gust).toFixed(3)})`;
+    // a frame can be stamped slightly before the script ran; never step the springs backwards
+    if (t0 === null) { t0 = t; last = t; }
+    const dt = Math.min(Math.max((t - last) / 1000, 0), .05); last = t;
+    const gust = WIND(t), tl = t - t0;   // tl: time since the rose first appeared, for the grow-in and bloom
+    // The gust pushes the stem's tip downwind; buffeting adds small fast turbulence on top.
+    const push = 16 * (gust - .3) + (1.6 * Math.sin(t / 230) + .9 * Math.sin(t / 97 + 1.3)) * gust;
+    // stiff stem spring: builds into a gust, overshoots a little as it drops, then settles
+    vD += (26 * (push - D) - 5.2 * vD) * dt; D += vD * dt;
+    // the bloom is heavier and hinged at the stem top: it lags the stem and nods past it
+    const tipSlope = 1.6 * D / 200;
+    const nodTarget = Math.atan(tipSlope) * 57.3 * 1.15 + 3 * (gust - 1) * Math.sin(t / 410);
+    vA += (14 * (nodTarget - A) - 2.6 * vA) * dt; A += vA * dt;
+    if (tl > 1300) {   // after the stem has finished growing in
+      const p = STEM.map(([x, y]) => `${(x + bend(D, y)).toFixed(2)} ${y}`);
+      stem.setAttribute("d", `M${p[0]} C ${p[1]}, ${p[2]}, ${p[3]} C ${p[4]}, ${p[5]}, ${p[6]}`);
+      thorn.setAttribute("d", `M${(5 + bend(D, 196)).toFixed(2)} 196 l10 -5 l-8 10z M${(-11 + bend(D, 150)).toFixed(2)} 150 l-10 -3 l8 8z M${(9 + bend(D, 74)).toFixed(2)} 74 l9 -6 l-7 10z`);
+      sepals.setAttribute("transform", `translate(${bend(D, 40).toFixed(2)} 0) rotate(${A.toFixed(2)} 0 40)`);
+      bloom.setAttribute("transform", `translate(${bend(D, 32).toFixed(2)} 0) rotate(${A.toFixed(2)} 0 32)`);
+    }
+    // Bloom: the bud opens over ~3.5s, inner petals first and the outer flares last; then the outer petals ruffle in the gusts.
+    const P = Math.min(1, Math.max(0, (tl - 900) / 3500));
+    petals.forEach((pt, i) => {
+      const q0 = Math.min(1, Math.max(0, (P - pt.o * .55) / .45)), q = 1 - Math.pow(1 - q0, 3);
+      const ang = pt.a * (1 - q) + (pt.ruffle && q0 >= 1 ? Math.sign(pt.a) * -1 * (gust - .6) * 2.4 * (.7 + .3 * Math.sin(t / 160 + i)) : 0);
+      const sc = pt.s + (1 - pt.s) * q;
+      pt.el.setAttribute("transform", `rotate(${ang.toFixed(2)} ${pt.bx} ${pt.by}) translate(${pt.bx} ${pt.by}) scale(${sc.toFixed(3)}) translate(${-pt.bx} ${-pt.by})`);
+    });
+    if (tl > 2600) {
+      // leaves ride the bending stem and flutter harder in strong gusts
+      const flap = (1.5 + 6 * Math.max(0, gust - .3)) * (.6 + .4 * Math.sin(t / 210)) + vD * .04;
+      leafR.style.transform = `translate(${bend(D, 164).toFixed(2)}px, 0) rotate(${(-flap).toFixed(2)}deg) scaleY(${(1 - .05 * gust).toFixed(3)})`;
+      leafL.style.transform = `translate(${bend(D, 120).toFixed(2)}px, 0) rotate(${(flap * .8).toFixed(2)}deg) scaleY(${(1 - .05 * gust).toFixed(3)})`;
     }
     ctx.clearRect(0, 0, W, H);
     for (const g of grains) {
