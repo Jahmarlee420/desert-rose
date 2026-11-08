@@ -76,6 +76,23 @@ const WATER = (() => {
     </svg>`;
   }
 
+  // A meandering stream: bends that loosen as it nears the sand, smoothed into one curve (Catmull-Rom to cubic Bezier).
+  function winding(x0, y0, x1, y1) {
+    const N = 9, pts = [];
+    for (let i = 0; i < N; i++) {
+      const t = i / (N - 1);
+      const sway = 15 * (1 - t) ** 1.2 * Math.sin(t * Math.PI * 3.2);
+      pts.push([x0 + (x1 - x0) * (t * .85 + .15 * t * t), Math.min(y1 + 2, y0 + (y1 - y0) * Math.sqrt(t) + sway)]);
+    }
+    pts.unshift([x0, y0 - 6]); pts.push([x1 + 10, y1]);
+    let d = `M${pts[1][0].toFixed(1)} ${pts[1][1].toFixed(1)}`;
+    for (let i = 1; i < pts.length - 2; i++) {
+      const [p0, p1, p2, p3] = [pts[i - 1], pts[i], pts[i + 1], pts[i + 2]];
+      d += ` C${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)} ${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)}, ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)} ${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)}, ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+    }
+    return d;
+  }
+
   function init() {
     const svg = document.getElementById("water");
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -109,7 +126,7 @@ const WATER = (() => {
         s.join = { x: s.cx, y: jy };
         return `M${s.cx} ${jy} L${s.cx} ${bottom - r} Q${s.cx} ${bottom} ${s.cx + inward * r} ${bottom} L${W / 2} ${bottom}`;
       });
-      paths.push(`M8 ${bedY - 16} C 22 ${bedY - 16}, 26 ${bedY}, 48 ${bedY} L${bedX} ${bedY}`);
+      paths.push(winding(8, bedY - 58, bedX, bedY));
       paths.forEach((d, i) => {
         const thin = i === 2, k = thin ? .55 : 1;
         el("path", { d, stroke: "#1f6f6b", "stroke-opacity": .35, "stroke-width": 8 * k, fill: "none", "stroke-linecap": "round", "stroke-linejoin": "round" }, svg);
