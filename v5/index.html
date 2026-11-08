@@ -146,7 +146,7 @@ footer .fdove .wing.far { animation-name: wingbeat-far; animation-delay: -.05s; 
 /* v4: detailed hydria vases in the top corners with live water */
 /* the Enterprise drifts in from the distance through the open band of sky, then jumps to warp */
 /* sits behind the page content (z-index 0) so the rose and vases pass in front of it; route set by flyby() */
-.flyby { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 0; pointer-events: none; }
+.flyby { position: absolute; left: 0; top: 0; width: 100%; height: 100vh; overflow: hidden; z-index: 0; pointer-events: none; }
 .flyby .ship { position: absolute; left: 0; top: 0; opacity: 0; transform-origin: 0 50%; filter: drop-shadow(0 0 5px rgba(120, 200, 255, .35)); }
 .flyby .ship svg { display: block; width: 100%; height: auto; }
 .flyby .warp, .flyby .deflector { animation: nacglow 1.8s ease-in-out infinite; }
@@ -210,11 +210,11 @@ footer .heart svg { width: 100%; height: 100%; display: block; }
 </div>
 <div class="meander" id="m2"></div>
 
-<script src="jess-art.js?v=5p"></script>
-<script src="rose.js?v=5p"></script>
-<script src="water.js?v=5p"></script>
-<script src="dove.js?v=5p"></script>
-<script src="trek.js?v=5p"></script>
+<script src="jess-art.js?v=5q"></script>
+<script src="rose.js?v=5q"></script>
+<script src="water.js?v=5q"></script>
+<script src="dove.js?v=5q"></script>
+<script src="trek.js?v=5q"></script>
 <script>const MODE = "frame"; document.body.classList.add(MODE);</script>
 <script>
 document.getElementById("rose").insertAdjacentHTML("afterbegin", ROSE.svg("hero"));
@@ -232,20 +232,23 @@ function flyby() {
   const R = s => document.querySelector(s).getBoundingClientRect();
   const vl = R(".vase.l svg > g > path:nth-of-type(5)"), vr = R(".vase.r svg > g > path:nth-of-type(5)"), head = R(".rose .head");
   const wide = vr.left - vl.right > 520;
-  const w = wide ? 132 : 72, h = w * 40 / 120, warp = wide ? 2.4 : 1.25, cruise = .92;
+  // on phones the ship passes behind the rose, then flies on and away (shrinking, rising) before it jumps
+  const w = wide ? 132 : 72, h = w * 40 / 120, warp = wide ? 2.4 : 1.25, cruise = wide ? .92 : .5;
   ship.style.width = w + "px";
-  let x0, xm, x2, y;
+  let x0, xm, x2, y, yEnd;
   if (wide) {
     y = 60 + sy;
     x0 = vl.right + sx + 60;
     x2 = vr.left + sx - 30 - w * cruise * warp - 24 - 70;   // leaves room for the warp flash and lens ring
     xm = x0 + (x2 - x0) * .7;
+    yEnd = y + 2;
   } else {
     y = head.top + sy + head.height * .3 - h / 2;
     const limit = document.documentElement.clientWidth - 22;
     x0 = 24;
     xm = head.left + sx + head.width / 2 - w * .4;
     x2 = limit - w * cruise * warp - 24 - 16;   // as far right as the warp effects allow
+    yEnd = Math.max(y - 12, Math.max(vl.bottom, vr.bottom) + sy + 22);   // rises a little, never into the vases
   }
   const at = (x, yy, s, sxw = 1) => `translate(${x.toFixed(1)}px, ${yy.toFixed(1)}px) scale(${s}) scaleX(${sxw})`;
   if (flybyAnim) flybyAnim.cancel();
@@ -253,12 +256,12 @@ function flyby() {
     { offset: 0, transform: at(x0, y - 8, .5), opacity: 0 },
     { offset: .015, transform: at(x0 + (xm - x0) * .03, y - 7, .52), opacity: .95 },
     { offset: .3, transform: at(xm, y, .88), opacity: 1 },
-    { offset: WARP, transform: at(x2, y + 2, cruise), opacity: 1 },
-    { offset: WARP + .01, transform: at(x2 + 6, y + 2, cruise, warp), opacity: .95 },
-    { offset: WARP + .018, transform: at(x2 + 24, y + 2, cruise, warp), opacity: 0 },
-    { offset: 1, transform: at(x2 + 24, y + 2, cruise, warp), opacity: 0 }
+    { offset: WARP, transform: at(x2, yEnd, cruise), opacity: 1 },
+    { offset: WARP + .01, transform: at(x2 + 6, yEnd, cruise, warp), opacity: .95 },
+    { offset: WARP + .018, transform: at(x2 + 24, yEnd, cruise, warp), opacity: 0 },
+    { offset: 1, transform: at(x2 + 24, yEnd, cruise, warp), opacity: 0 }
   ], { duration: 32000, delay: 1500, iterations: Infinity, easing: "linear" });
-  warpFx({ x2, y, w, h, cruise, warp, wide, vaseBottom: Math.max(vl.bottom, vr.bottom) + sy });
+  warpFx({ x2, y: yEnd, w, h, cruise, warp, wide, vaseBottom: Math.max(vl.bottom, vr.bottom) + sy });
 }
 
 // Warp-out effects, timed to the ship's jump (offset .40 of the same 32s loop).
@@ -291,7 +294,7 @@ function warpFx({ x2, y, w, h, cruise, warp, wide, vaseBottom }) {
   ]);
 
   // flash at the jump point
-  const fr = wide ? 34 : 24, fl = mk("flash");
+  const fr = wide ? 34 : 14, fl = mk("flash");
   Object.assign(fl.style, { width: fr * 2 + "px", height: fr * 2 + "px", left: (frontX + len - fr) + "px", top: (midY - fr) + "px" });
   run(fl, [
     { offset: 0, opacity: 0, transform: "scale(.1)" }, { offset: WARP + .012, opacity: 0, transform: "scale(.1)" },
