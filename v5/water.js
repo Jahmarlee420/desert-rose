@@ -216,5 +216,5 @@ const WATER = (() => {
     document.fonts && document.fonts.ready.then(layout);
     setTimeout(layout, 3000);
   }
-  return { vase, init };
+  return { vase, init, winding, K };
 })();

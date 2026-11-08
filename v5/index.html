@@ -151,6 +151,15 @@ footer .fdove .wing.far { animation-name: wingbeat-far; animation-delay: -.05s; 
 .flyby .ship svg { display: block; width: 100%; height: auto; }
 .flyby .warp, .flyby .deflector { animation: nacglow 1.8s ease-in-out infinite; }
 @keyframes nacglow { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+/* warp-out: light trails, a flash, and a lens ring that bends the stars behind it */
+.flyby .fx { position: absolute; left: 0; top: 0; opacity: 0; pointer-events: none; }
+.flyby .trails { overflow: visible; }
+.flyby .flash { border-radius: 50%; background: radial-gradient(circle, #ffffff 0%, #cfefff 22%, rgba(110, 200, 255, .55) 45%, rgba(110, 200, 255, 0) 70%); mix-blend-mode: screen; }
+.flyby .portal { border-radius: 50%;
+  -webkit-backdrop-filter: blur(2.5px) saturate(1.8) hue-rotate(35deg) contrast(1.2); backdrop-filter: blur(2.5px) saturate(1.8) hue-rotate(35deg) contrast(1.2);
+  box-shadow: inset 0 0 14px rgba(150, 220, 255, .55), 0 0 10px rgba(150, 220, 255, .45), inset 3px 0 6px rgba(255, 120, 200, .35), inset -3px 0 6px rgba(120, 255, 230, .35);
+  -webkit-mask: radial-gradient(circle, transparent 38%, #000 52%, #000 66%, transparent 74%); mask: radial-gradient(circle, transparent 38%, #000 52%, #000 66%, transparent 74%); }
+.flyby .ripple { border-radius: 50%; border: 1.5px solid rgba(190, 235, 255, .7); box-shadow: 0 0 8px rgba(150, 220, 255, .5); }
 .flyby .navlight { animation: navblink 1.4s steps(1) infinite; } .flyby .navlight.red { animation-delay: -.7s; }
 @keyframes navblink { 0%, 70% { opacity: .15; } 72%, 100% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .flyby { display: none; } }
@@ -201,11 +210,11 @@ footer .heart svg { width: 100%; height: 100%; display: block; }
 </div>
 <div class="meander" id="m2"></div>
 
-<script src="jess-art.js?v=5j"></script>
-<script src="rose.js?v=5j"></script>
-<script src="water.js?v=5j"></script>
-<script src="dove.js?v=5j"></script>
-<script src="trek.js?v=5j"></script>
+<script src="jess-art.js?v=5k"></script>
+<script src="rose.js?v=5k"></script>
+<script src="water.js?v=5k"></script>
+<script src="dove.js?v=5k"></script>
+<script src="trek.js?v=5k"></script>
 <script>const MODE = "frame"; document.body.classList.add(MODE);</script>
 <script>
 document.getElementById("rose").insertAdjacentHTML("afterbegin", ROSE.svg("hero"));
@@ -221,20 +230,20 @@ function flyby() {
   const R = s => document.querySelector(s).getBoundingClientRect();
   const vl = R(".vase.l svg > g > path:nth-of-type(5)"), vr = R(".vase.r svg > g > path:nth-of-type(5)"), head = R(".rose .head");
   const wide = vr.left - vl.right > 520;
-  const w = wide ? 132 : 90, h = w * 40 / 120, warp = wide ? 2.4 : 1.6, cruise = .92;
+  const w = wide ? 132 : 80, h = w * 40 / 120, warp = wide ? 2.4 : 1.4, cruise = .92;
   ship.style.width = w + "px";
   let x0, xm, x2, y;
   if (wide) {
     y = 60 + sy;
     x0 = vl.right + sx + 60;
-    x2 = vr.left + sx - 30 - w * cruise * warp - 24;
+    x2 = vr.left + sx - 30 - w * cruise * warp - 24 - 70;   // leaves room for the warp flash and lens ring
     xm = x0 + (x2 - x0) * .7;
   } else {
     y = head.top + sy + head.height * .3 - h / 2;
     const limit = document.documentElement.clientWidth - 30;
     x0 = 24;
     xm = head.left + sx + head.width / 2 - w * .4;
-    x2 = Math.min(xm + head.width * .55, limit - w * cruise * warp - 24);
+    x2 = Math.min(xm + head.width * .55, limit - w * cruise * warp - 24 - 40);
   }
   const at = (x, yy, s, sxw = 1) => `translate(${x.toFixed(1)}px, ${yy.toFixed(1)}px) scale(${s}) scaleX(${sxw})`;
   if (flybyAnim) flybyAnim.cancel();
@@ -247,6 +256,63 @@ function flyby() {
     { offset: .418, transform: at(x2 + 24, y + 2, cruise, warp), opacity: 0 },
     { offset: 1, transform: at(x2 + 24, y + 2, cruise, warp), opacity: 0 }
   ], { duration: 32000, delay: 1500, iterations: Infinity, easing: "linear" });
+  warpFx({ x2, y, w, h, cruise, warp, wide });
+}
+
+// Warp-out effects, timed to the ship's jump (offset .40 of the same 32s loop).
+let warpAnims = [];
+function warpFx({ x2, y, w, h, cruise, warp, wide }) {
+  warpAnims.forEach(a => a.cancel()); warpAnims = [];
+  const host = document.querySelector(".flyby");
+  host.querySelectorAll(".fx").forEach(n => n.remove());
+  const mk = (cls, tag = "div") => { const n = tag === "svg" ? document.createElementNS("http://www.w3.org/2000/svg", "svg") : document.createElement(tag); n.setAttribute("class", "fx " + cls); host.appendChild(n); return n; };
+  const sw = w * cruise, sh = h * cruise;                    // ship size at cruise
+  const frontX = x2 + sw, midY = y + h / 2;                  // where it jumps from
+  const len = sw * (warp - 1) + 24 + 6;                      // trails reach the end of the stretched ship
+  const timing = { duration: 32000, delay: 1500, iterations: Infinity, easing: "linear" };
+  const run = (node, frames) => warpAnims.push(node.animate(frames, timing));
+
+  // light trails from nacelles, saucer rim and hull: bright at the ship, fading forward
+  const tr = mk("trails", "svg");
+  const tw = sw + len, th = sh + 8;
+  tr.setAttribute("width", tw); tr.setAttribute("height", th); tr.setAttribute("viewBox", `0 0 ${tw} ${th}`);
+  tr.style.left = x2 + "px"; tr.style.top = (midY - th / 2) + "px"; tr.style.transformOrigin = `${sw}px 50%`;
+  const lanes = [[.30, 1.6, "#ffffff"], [.42, 1.1, "#bfe9ff"], [.55, 2, "#7fd0ff"], [.62, 1.2, "#e3f6ff"], [.78, 1.4, "#9adfff"], [.88, .8, "#ffd2e6"]];
+  tr.innerHTML = `<defs><linearGradient id="trailg" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".35" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#9fe3ff" stop-opacity="0"/></linearGradient>
+    <filter id="trailglow" x="-10%" y="-200%" width="120%" height="500%"><feGaussianBlur stdDeviation="1.2"/></filter></defs>` +
+    lanes.map(([fy, sw2, c]) => `<line x1="${sw * .2}" y1="${(4 + fy * sh).toFixed(1)}" x2="${tw}" y2="${(4 + fy * sh).toFixed(1)}" stroke="${c}" stroke-width="${sw2 * 2.4}" stroke-opacity=".35" filter="url(#trailglow)"/>
+      <line x1="${sw * .2}" y1="${(4 + fy * sh).toFixed(1)}" x2="${tw}" y2="${(4 + fy * sh).toFixed(1)}" stroke="url(#trailg)" stroke-width="${sw2}" stroke-linecap="round"/>`).join("");
+  run(tr, [
+    { offset: 0, opacity: 0, transform: "scaleX(.1)" }, { offset: .398, opacity: 0, transform: "scaleX(.1)" },
+    { offset: .408, opacity: 1, transform: "scaleX(1)" }, { offset: .418, opacity: .9, transform: "scaleX(1.02)" },
+    { offset: .432, opacity: 0, transform: "scaleX(1.05) scaleY(.3)" }, { offset: 1, opacity: 0, transform: "scaleX(.1)" }
+  ]);
+
+  // flash at the jump point
+  const fr = wide ? 34 : 24, fl = mk("flash");
+  Object.assign(fl.style, { width: fr * 2 + "px", height: fr * 2 + "px", left: (frontX + len - fr) + "px", top: (midY - fr) + "px" });
+  run(fl, [
+    { offset: 0, opacity: 0, transform: "scale(.1)" }, { offset: .412, opacity: 0, transform: "scale(.1)" },
+    { offset: .417, opacity: 1, transform: "scale(1)" }, { offset: .426, opacity: 0, transform: "scale(1.6) scaleY(.5)" },
+    { offset: 1, opacity: 0, transform: "scale(.1)" }
+  ]);
+
+  // space distortion: a lens ring that bends the stars behind it, then a trailing ripple
+  const pr = wide ? 54 : 36, cx = frontX + len * .55;
+  const po = mk("portal");
+  Object.assign(po.style, { width: pr * 2 + "px", height: pr * 2 + "px", left: (cx - pr) + "px", top: (midY - pr) + "px" });
+  run(po, [
+    { offset: 0, opacity: 0, transform: "scale(.05) scaleX(.7)" }, { offset: .404, opacity: 0, transform: "scale(.05) scaleX(.7)" },
+    { offset: .414, opacity: 1, transform: "scale(.7) scaleX(.85)" }, { offset: .43, opacity: .6, transform: "scale(1)" },
+    { offset: .45, opacity: 0, transform: "scale(1.08)" }, { offset: 1, opacity: 0, transform: "scale(.05)" }
+  ]);
+  const ri = mk("ripple");
+  Object.assign(ri.style, { width: pr * 2 + "px", height: pr * 2 + "px", left: (cx - pr) + "px", top: (midY - pr) + "px" });
+  run(ri, [
+    { offset: 0, opacity: 0, transform: "scale(.1) scaleX(.6)" }, { offset: .418, opacity: 0, transform: "scale(.1) scaleX(.6)" },
+    { offset: .424, opacity: .8, transform: "scale(.45) scaleX(.75)" }, { offset: .446, opacity: 0, transform: "scale(1) scaleX(.9)" },
+    { offset: 1, opacity: 0, transform: "scale(.1)" }
+  ]);
 }
 setTimeout(flyby, 1200);
 addEventListener("resize", () => { clearTimeout(flyby.t); flyby.t = setTimeout(flyby, 300); });
